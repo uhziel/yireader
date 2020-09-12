@@ -3,6 +3,7 @@
     <div id="nav">
       <router-link to="/">首页</router-link> |
       <router-link to="/about">书源</router-link>
+      <SearchBar/>
     </div>
     <router-view/>
   </div>
@@ -30,3 +31,15 @@
   color: #42b983;
 }
 </style>
+
+<script>
+// @ is an alias to /src
+import SearchBar from '@/components/SearchBar.vue'
+
+export default {
+  name: 'App',
+  components: {
+    SearchBar
+  }
+}
+</script>
