@@ -7,3 +7,7 @@ export function search(key) {
 export function detail(bookInfo) {
     return axios.post("http://192.168.31.203:8888/dev/debug/detail", bookInfo);
 }
+
+export function catalog(bookDetail) {
+    return axios.post("http://192.168.31.203:8888/dev/debug/catalog", bookDetail);
+}
