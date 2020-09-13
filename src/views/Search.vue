@@ -1,7 +1,7 @@
 <template>
   <div class="search">
     <h1>This is an {{searchKey}} search page</h1>
-    <BookInfo v-for="book in searchResult" :key="book.detail" :name="book.name" :author="book.author" :cover="book.cover" :summary="book.summary" />
+    <BookInfo v-for="bookInfo in searchResult" :key="bookInfo.detail" :info="bookInfo" />
   </div>
 </template>
 

@@ -24,6 +24,12 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue'),
     props: true
   },
+  {
+    path: '/bookdetail/:name',
+    name: 'BookDetail',
+    component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
+    props: true
+  }
 ]
 
 const router = new VueRouter({

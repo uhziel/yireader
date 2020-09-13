@@ -1,21 +1,16 @@
 <template>
   <div class="bookInfo">
-    <img :alt="name+'封面'" :src="cover">
-    <h4>{{name}}</h4>
-    <p>作者：{{author}}</p>
-    <p>{{summary}}</p>
+    <router-link :to='{name:"BookDetail", params:{name: info.name}, query: info}'><img :alt="info.name+'封面'" :src="info.cover"></router-link>
+    <router-link :to='{name:"BookDetail", params:{name: info.name}, query: info}'><h4>{{info.name}}</h4></router-link>
+    <p>作者：{{info.author}}</p>
+    <p>{{info.summary}}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'BookInfo',
-  props: {
-    name: String,
-    author: String,
-    cover: String,
-    summary: String
-  }
+  props: ["info"]
 }
 </script>
 
