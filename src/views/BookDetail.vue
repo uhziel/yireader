@@ -6,7 +6,7 @@
     <p>{{bookInfo.summary}}</p>
     <p>最新章节：{{bookDetail.lastChapter}}</p>
     <div class="catalog">
-      <p v-for="chapter in bookCatalog" :key="chapter.url"><a :href="chapter.url">{{chapter.name}}</a></p>
+      <p v-for="chapter in bookCatalog" :key="chapter.url"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, chapterName:chapter.name}, query: chapter}'>{{chapter.name}}</router-link></p>
     </div>
   </div>
 </template>

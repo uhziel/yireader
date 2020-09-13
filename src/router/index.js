@@ -29,7 +29,13 @@ Vue.use(VueRouter)
     name: 'BookDetail',
     component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
     props: true
-  }
+  },
+  {
+    path: '/bookchapter/:name/:chapterName',
+    name: 'BookChapter',
+    component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
+    props: true
+  },
 ]
 
 const router = new VueRouter({

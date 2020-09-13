@@ -11,3 +11,7 @@ export function detail(bookInfo) {
 export function catalog(bookDetail) {
     return axios.post("http://192.168.31.203:8888/dev/debug/catalog", bookDetail);
 }
+
+export function chapter(chapterInfo) {
+    return axios.post("http://192.168.31.203:8888/dev/debug/chapter", chapterInfo);
+}
