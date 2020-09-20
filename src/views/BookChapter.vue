@@ -1,5 +1,6 @@
 <template>
   <div class="BookChapter">
+    <h2>{{chapterName}}</h2>
     <p v-for="paragraph in paragraphs" :key="paragraph">{{paragraph}}</p>
   </div>
 </template>
