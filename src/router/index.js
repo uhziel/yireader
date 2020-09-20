@@ -25,13 +25,13 @@ Vue.use(VueRouter)
     props: true
   },
   {
-    path: '/bookdetail/:name',
+    path: '/bookdetail/:name-:author',
     name: 'BookDetail',
     component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
     props: true
   },
   {
-    path: '/bookchapter/:name/:chapterName',
+    path: '/bookchapter/:name-:author/:chapterName',
     name: 'BookChapter',
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
     props: true
