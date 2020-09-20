@@ -6,7 +6,7 @@
     <p>{{bookInfo.summary}}</p>
     <p>最新章节：{{bookData.bookDetail.lastChapter}}</p>
     <div class="catalog">
-      <p v-for="chapter in bookData.bookCatalog" :key="chapter.url"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterName:chapter.name}, query: chapter}'>{{chapter.name}}</router-link></p>
+      <p v-for="(chapter, index) in bookData.bookCatalog" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:index}}'>{{chapter.name}}</router-link></p>
     </div>
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   props: ["name", "author"],
   data() {
     return {
-      bookData: { bookDetail: {lastChapter: ""}, bookCatalog: [] },
+      bookData: { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} },
       bookInfo: [],
       bookFullName: ""
     }
@@ -32,13 +32,13 @@ export default {
     console.log("bookInfo: ", this.bookInfo)
   },
   mounted() {
-    this.loadBookDetail();
+    this.loadBookData();
   },
   watch: {
     $route() {
       this.bookInfo = this.$route.query;
       this.bookFullName = this.name + "-" + this.author;
-      this.loadBookDetail();
+      this.loadBookData();
     }
   },
   methods: {
@@ -50,12 +50,13 @@ export default {
       }).then(res => {
           console.log("bookDetail:", res.data);
           this.bookData.bookCatalog = res.data;
-          this.saveCatalog();
+          this.bookData.bookInfo = this.bookInfo;
+          this.saveBookData();
       }).catch(res => {
         console.error(res);
       });
     },
-    loadBookDetail() {
+    loadBookData() {
       if (localStorage.getItem(this.bookFullName)) {
         try {
           this.bookData = JSON.parse(localStorage.getItem(this.bookFullName));
@@ -67,7 +68,7 @@ export default {
         this.fetchBookDetail(this.bookInfo);
       }
     },
-    saveCatalog() {
+    saveBookData() {
       const parsed = JSON.stringify(this.bookData);
       localStorage.setItem(this.bookFullName, parsed);
     }
