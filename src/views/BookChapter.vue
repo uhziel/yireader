@@ -1,13 +1,13 @@
 <template>
   <div class="BookChapter">
     <h2>{{chapterInfo.name}}</h2>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex-1}, query: lastChapterInfo}'>{{lastChapterInfo.name}}</router-link>
+    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:parseInt(chapterIndex)-1}}'>{{lastChapterInfo.name}}</router-link>
     <router-link :to='{name:"BookDetail", params:{name: name, author:author}, query: bookData.bookInfo}'><h4>目录</h4></router-link>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex+1}, query: nextChapterInfo}'>{{nextChapterInfo.name}}</router-link>
+    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:parseInt(chapterIndex)+1}}'>{{nextChapterInfo.name}}</router-link>
     <p v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex-1}, query: lastChapterInfo}'>{{lastChapterInfo.name}}</router-link>
+    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex-1}}'>{{lastChapterInfo.name}}</router-link>
     <router-link :to='{name:"BookDetail", params:{name: name, author:author}, query: bookData.bookInfo}'><h4>目录</h4></router-link>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex+1}, query: nextChapterInfo}'>{{nextChapterInfo.name}}</router-link>
+    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex+1}}'>{{nextChapterInfo.name}}</router-link>
   </div>
 </template>
 
