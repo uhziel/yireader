@@ -19,16 +19,23 @@ export default {
   props: ["name", "author", "chapterIndex"],
   data() {
     return {
-      bookData: { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} },
-      bookFullName: "",
       paragraphs: [],
-      chapterInfo: {},
-      lastChapterInfo: {},
-      nextChapterInfo: {}
     };
   },
+  computed: {
+    bookData() {
+      //return this.$store.state.books[this.bookFullName]
+      return this.$store.getters.getBookByFullName(this.bookFullName) ||
+        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} };
+    },
+    chapterInfo() { return this.bookData.bookCatalog[this.chapterIndex]; },
+    lastChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex-1]; },
+    nextChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex+1]; },
+    bookFullName () {
+      return this.name + "-" + this.author;
+    }
+  },
   created() {
-    this.loadBookData();
     this.fetchChapter(this.chapterInfo);
     console.log("name: ", this.name);
     console.log("author: ", this.author);
@@ -36,7 +43,6 @@ export default {
   },
   watch: {
     $route() {
-      this.loadBookData();
       this.fetchChapter(this.chapterInfo);
     }
   },
@@ -48,23 +54,6 @@ export default {
       }).catch(res => {
         console.error(res);
       });
-    },
-    loadBookData() {
-      this.bookFullName = this.name + "-" + this.author;
-      if (localStorage.getItem(this.bookFullName)) {
-        try {
-          this.bookData = JSON.parse(localStorage.getItem(this.bookFullName));
-          this.chapterInfo = this.bookData.bookCatalog[this.chapterIndex];
-          this.nextChapterInfo = this.bookData.bookCatalog[this.chapterIndex+1];
-          this.lastChapterInfo = this.bookData.bookCatalog[this.chapterIndex-1];
-        } catch (e) {
-          localStorage.removeItem(this.bookFullName);
-        }
-      }
-    },
-    saveBookData() {
-      const parsed = JSON.stringify(this.bookData);
-      localStorage.setItem(this.bookFullName, parsed);
     }
   }
 }
