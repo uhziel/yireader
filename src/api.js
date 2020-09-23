@@ -15,3 +15,10 @@ export function catalog(bookDetail) {
 export function chapter(chapterInfo) {
     return axios.post("http://192.168.31.203:8888/dev/debug/chapter", chapterInfo);
 }
+
+export default {
+    search,
+    detail,
+    catalog,
+    chapter
+};

@@ -12,66 +12,44 @@
 </template>
 
 <script>
-import {detail, catalog} from "@/api.js";
 
 export default {
   name: "BookDetail",
   props: ["name", "author"],
   data() {
     return {
-      bookData: { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} },
       bookInfo: [],
       bookFullName: ""
+    }
+  },
+  computed: {
+    bookData() { 
+      return this.$store.getters.getBookByFullName(this.bookFullName) ||
+        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }; 
     }
   },
   created() {
     this.bookInfo = this.$route.query;
     this.bookFullName = this.name + "-" + this.author;
+    if (!this.$store.getters.getBookByFullName(this.bookFullName)) {
+      console.log("fetchBook:", this.bookInfo);
+      this.$store.dispatch("fetchBook", this.bookInfo);
+    }
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("bookInfo: ", this.bookInfo)
-  },
-  mounted() {
-    this.loadBookData();
   },
   watch: {
     $route() {
       this.bookInfo = this.$route.query;
       this.bookFullName = this.name + "-" + this.author;
-      this.loadBookData();
+      if (!this.$store.getters.getBookByFullName(this.bookFullName)) {
+        console.log("fetchBook:", this.bookInfo);
+        this.$store.dispatch("fetchBook", this.bookInfo);
+      }
     }
   },
   methods: {
-    fetchBookDetail(bookInfo) {
-      detail(bookInfo).then(res => {
-        console.log(res.data);
-        this.bookData.bookDetail = res.data;
-        return catalog(this.bookData.bookDetail);
-      }).then(res => {
-          console.log("bookDetail:", res.data);
-          this.bookData.bookCatalog = res.data;
-          this.bookData.bookInfo = this.bookInfo;
-          this.saveBookData();
-      }).catch(res => {
-        console.error(res);
-      });
-    },
-    loadBookData() {
-      if (localStorage.getItem(this.bookFullName)) {
-        try {
-          this.bookData = JSON.parse(localStorage.getItem(this.bookFullName));
-        } catch (e) {
-          localStorage.removeItem(this.bookFullName);
-        }
-      }
-      else {
-        this.fetchBookDetail(this.bookInfo);
-      }
-    },
-    saveBookData() {
-      const parsed = JSON.stringify(this.bookData);
-      localStorage.setItem(this.bookFullName, parsed);
-    }
   }
 }
 </script>
