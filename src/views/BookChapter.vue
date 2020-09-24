@@ -1,22 +1,22 @@
 <template>
   <div class="BookChapter">
     <h2>{{chapterInfo.name}}</h2>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:parseInt(chapterIndex)-1}}'>{{lastChapterInfo.name}}</router-link>
-    <router-link :to='{name:"BookDetail", params:{name: name, author:author}, query: bookData.bookInfo}'><h4>目录</h4></router-link>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:parseInt(chapterIndex)+1}}'>{{nextChapterInfo.name}}</router-link>
+    <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
     <p v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex-1}}'>{{lastChapterInfo.name}}</router-link>
-    <router-link :to='{name:"BookDetail", params:{name: name, author:author}, query: bookData.bookInfo}'><h4>目录</h4></router-link>
-    <router-link :to='{name:"BookChapter", params:{name:name, author:author, chapterIndex:chapterIndex+1}}'>{{nextChapterInfo.name}}</router-link>
+    <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
   </div>
 </template>
 
 <script>
 import {chapter} from "@/api.js";
+import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
   name: "BookChapter",
   props: ["name", "author", "chapterIndex"],
+  components: {
+    ChapterNav
+  },
   data() {
     return {
       paragraphs: [],

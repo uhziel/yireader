@@ -16,7 +16,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h4 {
-  margin: 40px 0 0;
+.bookInfo {
+  margin: 10px 0 0;
+  border: 1px solid black;
 }
 </style>
