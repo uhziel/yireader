@@ -12,10 +12,26 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getBookByFullName (state) {
+    getBookByFullName(state) {
       return function (fullName) {
         return state.books[fullName];
       };
+    },
+    isInBookshelf(state) {
+      return function (fullName) {
+        return state.userData.bookshelf.indexOf(fullName) !== -1;
+      }
+    },
+    bookInfosInBookshelf(state, getters) {
+      let bookInfos = [];
+      for (const bookFullName of state.userData.bookshelf) {
+        let book = getters.getBookByFullName(bookFullName);
+        if (book) {
+          bookInfos.push(book.bookInfo);
+        }
+      }
+      console.log("bookInfosInBookshelf ", bookInfos);
+      return bookInfos;
     }
   },
   mutations: {
@@ -29,6 +45,7 @@ export default new Vuex.Store({
           localStorage.removeItem("userData");
         }
       }
+      console.log("initStore userData: ", state.userData );
       for (let i = 0; i < localStorage.length; i++) {
         let bookFullName = localStorage.key(i);
         if (bookFullName.indexOf("-") === -1 || bookFullName === "loglevel:webpack-dev-server") {
