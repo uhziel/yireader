@@ -21,6 +21,7 @@ export default {
   data() {
     return {
       paragraphs: [],
+      chapterCache: {},
       loading: true
     };
   },
@@ -38,23 +39,61 @@ export default {
     }
   },
   created() {
-    this.fetchChapter(this.chapterInfo);
+    this.loadChapter();
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("chapterIndex: ", this.chapterIndex);
   },
   watch: {
     $route() {
-      this.fetchChapter(this.chapterInfo);
+      this.loadChapter();
     }
   },
   methods: {
-    fetchChapter(chapterInfo) {
+    getChapterCache(chapterIndex) {
+      return this.chapterCache[chapterIndex];
+    },
+    loadChapter() {
+      if (this.getChapterCache(this.chapterIndex)) {
+        console.log("命中缓存:", this.chapterInfo.name);
+        this.paragraphs = this.getChapterCache(this.chapterIndex);
+      } else {
+        this.fetchChapter(this.chapterIndex, this.chapterInfo)
+      }
+
+      if (!this.getChapterCache(this.chapterIndex-1)) {
+        this.fetchChapterCache(this.chapterIndex-1, this.lastChapterInfo);
+      }
+
+      if (!this.getChapterCache(this.chapterIndex+1)) {
+        this.fetchChapterCache(this.chapterIndex+1, this.nextChapterInfo);
+      }
+
+      let toDel = [];
+      for (const chapterIndex in this.chapterCache) {
+        if (Math.abs(chapterIndex - this.chapterIndex) > 1) {
+          toDel.push(chapterIndex);
+        }
+      }
+      for (const chapterIndex of toDel) {
+        delete this.chapterCache[chapterIndex];
+      }
+    },
+    fetchChapter(chapterIndex, chapterInfo) {
       this.loading = true;
       chapter(chapterInfo).then(res => {
         console.log(res.data);
         this.loading = false;
         this.paragraphs = res.data.content.split('\n');
+        this.chapterCache[chapterIndex] = this.paragraphs;
+      }).catch(res => {
+        console.error(res);
+      });
+    },
+    fetchChapterCache(chapterIndex, chapterInfo) {
+      chapter(chapterInfo).then(res => {
+        console.log(res.data);
+        this.chapterCache[chapterIndex] = res.data.content.split('\n');
       }).catch(res => {
         console.error(res);
       });
