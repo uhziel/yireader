@@ -62,11 +62,11 @@ export default {
         this.fetchChapter(this.chapterIndex, this.chapterInfo)
       }
 
-      if (!this.getChapterCache(this.chapterIndex-1)) {
+      if (!this.getChapterCache(this.chapterIndex-1) && this.lastChapterInfo) {
         this.fetchChapterCache(this.chapterIndex-1, this.lastChapterInfo);
       }
 
-      if (!this.getChapterCache(this.chapterIndex+1)) {
+      if (!this.getChapterCache(this.chapterIndex+1) && this.nextChapterInfo) {
         this.fetchChapterCache(this.chapterIndex+1, this.nextChapterInfo);
       }
 
@@ -92,6 +92,7 @@ export default {
       });
     },
     fetchChapterCache(chapterIndex, chapterInfo) {
+      console.log("fetfetchChapterCache ", chapterInfo);
       chapter(chapterInfo).then(res => {
         console.log(res.data);
         this.chapterCache[chapterIndex] = res.data.content.split('\n');

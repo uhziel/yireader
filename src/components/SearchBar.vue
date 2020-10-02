@@ -2,7 +2,7 @@
   <div class="searchBar">
     <form>
       <input type="text" v-model="searchKey" placeholder="可搜书名，少字也别输错字">
-      <button @click="search">搜索</button>
+      <button @click.prevent="search">搜索</button>
     </form>
   </div>
 </template>
