@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">首页</router-link> |
-      <router-link to="/about">书源</router-link>
-      <SearchBar/>
+      <router-link class="navItem" to="/">首页</router-link>
+      <router-link class="navItem" to="/about">书源</router-link>
+      <SearchBar class="navSearch"/>
     </div>
     <router-view/>
   </div>
@@ -18,7 +18,20 @@
 }
 
 #nav {
-  padding: 30px;
+  display: flex;
+  border-bottom: 3px solid black;
+  margin-bottom: 8px;
+}
+
+#nav .navItem {
+  text-align: center;
+  flex: 1;
+  font-size: 1.1em;
+}
+
+#nav .navSearch {
+  text-align: right;
+  flex: 6;
 }
 
 #nav a {
@@ -27,7 +40,9 @@
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: white;
+  background-color: black;
+  text-decoration: none;
 }
 </style>
 

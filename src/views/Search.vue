@@ -1,6 +1,5 @@
 <template>
   <div class="search">
-    <h1>This is an {{searchKey}} search page</h1>
     <BookInfo v-for="bookInfo in searchResult" :key="bookInfo.detail" :info="bookInfo" />
   </div>
 </template>

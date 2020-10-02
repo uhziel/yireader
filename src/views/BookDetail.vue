@@ -1,15 +1,27 @@
 <template>
-  <div class="BookDetail">
-    <h4>{{bookInfo.name}}</h4>
-    <p>作者：{{bookInfo.author}}</p>
-    <img :alt="bookInfo.name+'封面'" :src="bookInfo.cover">
-    <p>{{bookInfo.summary}}</p>
-    <p>最新章节：{{bookData.bookDetail.lastChapter}}</p>
-    <p>书架：
-    <button v-if="!inBookShelf" @click="addToBookshelf()">加入</button>
-    <span v-else>已加入</span>
-    </p>
+  <div>
+    <div class="bookDetailInfo">
+      <div class="bookCover">
+        <img :alt="bookInfo.name+'封面'" :src="bookInfo.cover">
+      </div>
+      <div class="bookInfoBox">
+        <dl>
+          <dt>{{bookInfo.name}}</dt>
+          <dd>
+            <p>作者：{{bookInfo.author}}</p>
+            <p>最新章节：{{bookData.bookDetail.lastChapter}}</p>
+              <p>书架：<button v-if="!inBookShelf" @click="addToBookshelf()">加入</button><span v-else>已加入</span>
+              </p>
+          </dd>
+        </dl>
+      </div>
+    </div>
+    <div class="summary">
+      <div class="title">内容介绍</div>
+      <p>{{bookInfo.summary}}</p>   
+    </div>
     <div class="catalog">
+      <div class="title">目录</div>
       <p v-for="(chapter, index) in bookData.bookCatalog" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:index}}'>{{chapter.name}}</router-link></p>
     </div>
   </div>
@@ -67,3 +79,36 @@ export default {
   }
 }
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.bookDetailInfo {
+  display: flex;
+}
+.title {
+  background-color: #222;
+  color: white;
+  padding-left: 10px;
+}
+.bookCover {
+  flex: 3;
+}
+.bookInfoBox {
+  flex: 9;
+  padding-left: 10px;
+}
+.bookInfoBox p {
+  margin: 0;
+}
+.bookInfoBox dl dt {
+  border-bottom: 1px dotted #999;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.bookInfoBox dl dd {
+  margin: 10px 0 0 0;
+}
+.bookCover img {
+  max-width: 100%;
+}
+</style>

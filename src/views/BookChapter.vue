@@ -1,6 +1,6 @@
 <template>
   <div class="BookChapter">
-    <h2>{{chapterInfo.name}}</h2>
+    <h1 class="chapterName">{{chapterInfo.name}}</h1>
     <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
     <p v-if="loading">正在加载中</p>
     <p v-else v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
@@ -106,3 +106,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.chapterName {
+  text-align: center;
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
   <div class="searchBar">
     <form>
-      <input type="text" v-model="searchKey" placeholder="可搜书名，少字也别输错字">
+      <input id="searchKey" type="text" v-model="searchKey" placeholder="可搜书名，少字也别输错字">
       <button @click.prevent="search">搜索</button>
     </form>
   </div>
@@ -23,7 +23,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h4 {
-  margin: 40px 0 0;
+#searchKey {
+  margin: 0 5px 0 0;
 }
 </style>
