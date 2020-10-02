@@ -21,6 +21,7 @@ export default {
   },
   components: {
     BookInfo
-  }
+  },
+  title: "易读"
 }
 </script>

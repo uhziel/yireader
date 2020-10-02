@@ -36,6 +36,7 @@ export default {
         console.error(res);
       });
     }
-  }
+  },
+  title: "搜索 - 易读"
 }
 </script>

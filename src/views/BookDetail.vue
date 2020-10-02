@@ -61,6 +61,9 @@ export default {
     addToBookshelf() {
       this.$store.commit("addToBookshelf", this.bookFullName);
     }
+  },
+  title() {
+    return this.name + " - 易读";
   }
 }
 </script>

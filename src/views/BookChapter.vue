@@ -47,6 +47,7 @@ export default {
   watch: {
     $route() {
       this.loadChapter();
+      document.title = this.chapterInfo.name + " - 易读";
     }
   },
   methods: {
@@ -98,6 +99,9 @@ export default {
         console.error(res);
       });
     }
+  },
+  title() {
+    return this.chapterInfo.name + " - 易读";
   }
 }
 </script>
