@@ -1,22 +1,23 @@
 import axios from "axios";
 
-const origin = "http://192.168.0.114:8888";
-//const origin = "http://192.168.31.203:8888";
+const origin = "";
+//const origin = "http://192.168.0.114:8888/dev/debug";
+//const origin = "http://192.168.31.203:8888/dev/debug";
 
 export function search(key) {
-    return axios.get(`${origin}/dev/debug/search?key=${key}`);
+    return axios.get(`${origin}/search?key=${key}`);
 }
 
 export function detail(bookInfo) {
-    return axios.post(`${origin}/dev/debug/detail`, bookInfo);
+    return axios.post(`${origin}/detail`, bookInfo);
 }
 
 export function catalog(bookDetail) {
-    return axios.post(`${origin}/dev/debug/catalog`, bookDetail);
+    return axios.post(`${origin}/catalog`, bookDetail);
 }
 
 export function chapter(chapterInfo) {
-    return axios.post(`${origin}/dev/debug/chapter`, chapterInfo);
+    return axios.post(`${origin}/chapter`, chapterInfo);
 }
 
 export default {

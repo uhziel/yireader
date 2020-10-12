@@ -111,4 +111,8 @@ export default {
 .chapterName {
   text-align: center;
 }
+p {
+  text-indent: 2em;
+  font-size: 1.2em;
+}
 </style>
