@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <BookInfo v-for="bookInfo in bookInfos" :key="bookInfo.detail" :info="bookInfo" />
+    <BookInfo v-for="(bookInfo, index) in bookInfos" :key="index" :info="bookInfo" :reading="getReading(bookInfo)" />
   </div>
 </template>
 
@@ -17,6 +17,12 @@ export default {
   computed: {
     bookInfos() {
       return this.$store.getters.bookInfosInBookshelf;
+    },
+  },
+  methods: {
+    getReading(bookInfo) {
+      const fullName = bookInfo.name + '-' + bookInfo.author;
+      return this.$store.getters.getReadingProcess(fullName);
     }
   },
   components: {

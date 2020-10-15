@@ -9,6 +9,7 @@ export default new Vuex.Store({
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }>
     userData: { 
       bookshelf: [], //"name-author"...
+      reading: {}, //"name-author",chapter_index...
     }
   },
   getters: {
@@ -32,7 +33,24 @@ export default new Vuex.Store({
       }
       console.log("bookInfosInBookshelf ", bookInfos);
       return bookInfos;
-    }
+    },
+    getReadingProcess(state, getters) {
+      return function (fullName) {
+        const chapterIndex = state.userData.reading[fullName];
+        if (chapterIndex < 0) {
+          return null;
+        }
+        const book = getters.getBookByFullName(fullName);
+        if (!book.bookCatalog[chapterIndex]) {
+          return null;
+        }
+        return {
+          chapterIndex,
+          chapterName: book.bookCatalog[chapterIndex].name
+        };
+      };
+
+    },
   },
   mutations: {
     initStore (state) {
@@ -71,6 +89,14 @@ export default new Vuex.Store({
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length, bookFullName);
+      localStorage.setItem("userData", JSON.stringify(state.userData));
+    },
+    setReading (state, payload) {
+      console.log('setReading bookFullName:', payload.bookFullName, "index:", payload.chapterIndex);
+      if (!state.userData.reading) {
+        Vue.set(state.userData, 'reading', {});
+      }
+      Vue.set(state.userData.reading, payload.bookFullName, payload.chapterIndex);
       localStorage.setItem("userData", JSON.stringify(state.userData));
     }
   },

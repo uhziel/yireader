@@ -9,6 +9,7 @@
         <span>{{info.author}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
+      <p v-if="reading">已读到：<router-link :to='{name:"BookChapter", params:{name:info.name, author:info.author, chapterIndex:reading.chapterIndex}}'>{{reading.chapterName}}</router-link></p>
     </dl>
   </div>
 </template>
@@ -16,7 +17,7 @@
 <script>
 export default {
   name: 'BookInfo',
-  props: ["info"]
+  props: ['info', 'reading']
 }
 </script>
 

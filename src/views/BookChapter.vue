@@ -58,6 +58,11 @@ export default {
       if (this.getChapterCache(this.chapterIndex)) {
         console.log("命中缓存:", this.chapterInfo.name);
         this.paragraphs = this.getChapterCache(this.chapterIndex);
+        this.$store.commit({
+          type: 'setReading',
+          bookFullName: this.bookFullName,
+          chapterIndex: this.chapterIndex
+        });
       } else {
         this.fetchChapter(this.chapterIndex, this.chapterInfo)
       }
@@ -86,6 +91,11 @@ export default {
         console.log(res.data);
         this.loading = false;
         this.paragraphs = res.data.content.split('\n');
+        this.$store.commit({
+          type: 'setReading',
+          bookFullName: this.bookFullName,
+          chapterIndex: chapterIndex
+        });
         this.chapterCache[chapterIndex] = this.paragraphs;
       }).catch(res => {
         console.error(res);

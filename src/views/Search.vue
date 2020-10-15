@@ -1,6 +1,6 @@
 <template>
   <div class="search">
-    <BookInfo v-for="bookInfo in searchResult" :key="bookInfo.detail" :info="bookInfo" />
+    <BookInfo v-for="(bookInfo, index) in searchResult" :key="index" :info="bookInfo" />
   </div>
 </template>
 
