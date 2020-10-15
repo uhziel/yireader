@@ -15,7 +15,10 @@ export default {
   },
   methods: {
     search: function () {
-      this.$router.push({name: "Search", params: {searchKey: this.searchKey}});
+      if (this.searchKey.length !== 0) {
+        this.$router.push({name: "Search", params: {searchKey: this.searchKey}});
+        this.searchKey = "";
+      }
     }
   }
 }
