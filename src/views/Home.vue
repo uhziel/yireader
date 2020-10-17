@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <BookInfo v-for="(bookInfo, index) in bookInfos" :key="index" :info="bookInfo" :reading="getReading(bookInfo)" />
+    <BookInfo v-for="(bookInfo, index) in bookInfos" :key="index" :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
   </div>
 </template>
 

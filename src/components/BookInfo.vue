@@ -9,7 +9,14 @@
         <span>{{info.author}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
-      <p v-if="reading">已读到：<router-link :to='{name:"BookChapter", params:{name:info.name, author:info.author, chapterIndex:reading.chapterIndex}}'>{{reading.chapterName}}</router-link></p>
+      <div class="operate">
+        <button v-if="inBookshelf" @click="removeFromBookshelf">移出</button>
+        <button v-if="inBookshelf" :disabled="!moveUpEnable" @click="moveUp">上移</button>
+        <button v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</button>
+      </div>
+      <div class="process">
+        <span v-if="reading">已读到：<router-link :to='{name:"BookChapter", params:{name:info.name, author:info.author, chapterIndex:reading.chapterIndex}}'>{{reading.chapterName}}</router-link></span>
+      </div>
     </dl>
   </div>
 </template>
@@ -17,7 +24,35 @@
 <script>
 export default {
   name: 'BookInfo',
-  props: ['info', 'reading']
+  props: ['info', 'reading', 'inBookshelf', 'index'],
+  computed: {
+    bookFullName() {
+      return this.info.name + '-' + this.info.author;
+    },
+    moveUpEnable() {
+      return this.inBookshelf && this.index > 0;
+    },
+    moveDownEnable() {
+      return this.inBookshelf && this.index < this.$store.getters.bookshelfLength - 1;
+    }
+  },
+  created() {
+    console.log('BookInfo info', this.info);
+    console.log('BookInfo reading', this.reading);
+    console.log('BookInfo inBookshelf', this.inBookshelf);
+    console.log('BookInfo index', this.index);
+  },
+  methods: {
+    removeFromBookshelf() {
+      this.$store.commit('removeFromBookshelf', this.index);
+    },
+    moveUp() {
+      this.$store.commit('moveUpInBookshelf', this.index);
+    },
+    moveDown() {
+      this.$store.commit('moveDownInBookshelf', this.index);
+    },
+  },
 }
 </script>
 
@@ -31,6 +66,7 @@ export default {
 }
 .bookInfo dl {
   flex: 9.5;
+  margin: 10px 0 ;
 }
 .bookInfo dl dt {
   border-bottom: 1px dotted #A6D3E8;
@@ -50,5 +86,14 @@ export default {
 }
 .bookCover img {
   max-width: 100%;
+}
+.operate {
+  padding: 7px 0 0 0;
+}
+.operate button {
+  margin: 0 10px;
+}
+.process {
+  padding: 7px 0 0 0;
 }
 </style>

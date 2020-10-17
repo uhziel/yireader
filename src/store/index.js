@@ -8,25 +8,37 @@ export default new Vuex.Store({
   state: {
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }>
     userData: { 
-      bookshelf: [], //"name-author"...
-      reading: {}, //"name-author",chapter_index...
+      bookshelf: [], //{fullName: "", chapterIndex: -1, lastFetchTime: 0}
     }
   },
   getters: {
+    bookshelfLength(state) {
+      return state.userData.bookshelf.length;
+    },
     getBookByFullName(state) {
       return function (fullName) {
         return state.books[fullName];
       };
     },
-    isInBookshelf(state) {
+    getBookUserData(state) {
       return function (fullName) {
-        return state.userData.bookshelf.indexOf(fullName) !== -1;
-      }
+        for (const bookUserData of state.userData.bookshelf) {
+          if (bookUserData.fullName === fullName) {
+            return bookUserData;
+          }
+        }
+        return null;
+      };
+    },
+    isInBookshelf(state, getters) {
+      return function (fullName) {
+        return !!getters.getBookUserData(fullName);
+      };
     },
     bookInfosInBookshelf(state, getters) {
       let bookInfos = [];
-      for (const bookFullName of state.userData.bookshelf) {
-        let book = getters.getBookByFullName(bookFullName);
+      for (const bookUserData of state.userData.bookshelf) {
+        let book = getters.getBookByFullName(bookUserData.fullName);
         if (book) {
           bookInfos.push(book.bookInfo);
         }
@@ -36,7 +48,11 @@ export default new Vuex.Store({
     },
     getReadingProcess(state, getters) {
       return function (fullName) {
-        const chapterIndex = state.userData.reading[fullName];
+        const bookUserData = getters.getBookUserData(fullName);
+        if (!bookUserData) {
+          return null;
+        }
+        const chapterIndex = bookUserData.chapterIndex;
         if (chapterIndex < 0) {
           return null;
         }
@@ -88,16 +104,41 @@ export default new Vuex.Store({
       localStorage.setItem(fullName, JSON.stringify(book));
     },
     addToBookshelf (state, bookFullName) {
-      Vue.set(state.userData.bookshelf, state.userData.bookshelf.length, bookFullName);
+      Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
+        {fullName: bookFullName, chapterIndex: -1, lastFetchTime: 0});
+      localStorage.setItem("userData", JSON.stringify(state.userData));
+    },
+    removeFromBookshelf (state, indexInBookshelf) {
+      Vue.delete(state.userData.bookshelf, indexInBookshelf);
+      localStorage.setItem("userData", JSON.stringify(state.userData));
+    },
+    moveUpInBookshelf (state, indexInBookshelf) {
+      if (indexInBookshelf <= 0 ) {
+        return;
+      }
+      const tmp = state.userData.bookshelf[indexInBookshelf-1];
+      Vue.set(state.userData.bookshelf, indexInBookshelf-1, state.userData.bookshelf[indexInBookshelf]);
+      Vue.set(state.userData.bookshelf, indexInBookshelf, tmp);
+      localStorage.setItem("userData", JSON.stringify(state.userData));
+    },
+    moveDownInBookshelf (state, indexInBookshelf) {
+      if (indexInBookshelf >= state.userData.bookshelf.length - 1) {
+        return;
+      }
+      const tmp = state.userData.bookshelf[indexInBookshelf+1];
+      Vue.set(state.userData.bookshelf, indexInBookshelf+1, state.userData.bookshelf[indexInBookshelf]);
+      Vue.set(state.userData.bookshelf, indexInBookshelf, tmp);
       localStorage.setItem("userData", JSON.stringify(state.userData));
     },
     setReading (state, payload) {
       console.log('setReading bookFullName:', payload.bookFullName, "index:", payload.chapterIndex);
-      if (!state.userData.reading) {
-        Vue.set(state.userData, 'reading', {});
+      for (const bookUserData of state.userData.bookshelf) {
+        if (bookUserData.fullName === payload.bookFullName) {
+          bookUserData.chapterIndex = payload.chapterIndex;
+          localStorage.setItem("userData", JSON.stringify(state.userData));
+          break;
+        }
       }
-      Vue.set(state.userData.reading, payload.bookFullName, payload.chapterIndex);
-      localStorage.setItem("userData", JSON.stringify(state.userData));
     }
   },
   actions: {
