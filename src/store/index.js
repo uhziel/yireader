@@ -4,6 +4,15 @@ import api from "@/api.js";
 
 Vue.use(Vuex)
 
+function isInBookshelf(bookshelf, bookFullName) {
+  for (const bookUserData of bookshelf) {
+    if (bookUserData.fullName === bookFullName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default new Vuex.Store({
   state: {
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }>
@@ -88,6 +97,11 @@ export default new Vuex.Store({
         let bookStr = localStorage.getItem(bookFullName);
         if (bookStr) {
           try {
+            if (!isInBookshelf(state.userData.bookshelf, bookFullName)) {
+              localStorage.removeItem(bookFullName);
+              continue;
+            }
+            state.userData.bookshelf
             let book = JSON.parse(bookStr);
             Vue.set(state.books, bookFullName, book);
           } catch (e) {
