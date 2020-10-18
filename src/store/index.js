@@ -18,6 +18,9 @@ export default new Vuex.Store({
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }>
     userData: { 
       bookshelf: [], //{fullName: "", chapterIndex: -1, lastFetchTime: 0}
+      theme: {
+        'font-size': 1.235
+      },
     }
   },
   getters: {
@@ -120,11 +123,11 @@ export default new Vuex.Store({
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
         {fullName: bookFullName, chapterIndex: -1, lastFetchTime: 0, contentChanged: false});
-      localStorage.setItem("userData", JSON.stringify(state.userData));
+      localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     removeFromBookshelf (state, indexInBookshelf) {
       Vue.delete(state.userData.bookshelf, indexInBookshelf);
-      localStorage.setItem("userData", JSON.stringify(state.userData));
+      localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     moveUpInBookshelf (state, indexInBookshelf) {
       if (indexInBookshelf <= 0 ) {
@@ -133,7 +136,7 @@ export default new Vuex.Store({
       const tmp = state.userData.bookshelf[indexInBookshelf-1];
       Vue.set(state.userData.bookshelf, indexInBookshelf-1, state.userData.bookshelf[indexInBookshelf]);
       Vue.set(state.userData.bookshelf, indexInBookshelf, tmp);
-      localStorage.setItem("userData", JSON.stringify(state.userData));
+      localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     moveDownInBookshelf (state, indexInBookshelf) {
       if (indexInBookshelf >= state.userData.bookshelf.length - 1) {
@@ -142,14 +145,14 @@ export default new Vuex.Store({
       const tmp = state.userData.bookshelf[indexInBookshelf+1];
       Vue.set(state.userData.bookshelf, indexInBookshelf+1, state.userData.bookshelf[indexInBookshelf]);
       Vue.set(state.userData.bookshelf, indexInBookshelf, tmp);
-      localStorage.setItem("userData", JSON.stringify(state.userData));
+      localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     setReading (state, payload) {
       console.log('setReading bookFullName:', payload.bookFullName, " index:", payload.chapterIndex);
       for (const bookUserData of state.userData.bookshelf) {
         if (bookUserData.fullName === payload.bookFullName) {
           bookUserData.chapterIndex = payload.chapterIndex;
-          localStorage.setItem("userData", JSON.stringify(state.userData));
+          localStorage.setItem('userData', JSON.stringify(state.userData));
           break;
         }
       }
@@ -159,7 +162,7 @@ export default new Vuex.Store({
       for (const bookUserData of state.userData.bookshelf) {
         if (bookUserData.fullName === payload.bookFullName) {
           bookUserData.lastFetchTime = payload.lastFetchTime;
-          localStorage.setItem("userData", JSON.stringify(state.userData));
+          localStorage.setItem('userData', JSON.stringify(state.userData));
           break;
         }
       }
@@ -170,10 +173,17 @@ export default new Vuex.Store({
       for (const bookUserData of state.userData.bookshelf) {
         if (bookUserData.fullName === payload.bookFullName) {
           bookUserData.contentChanged = payload.contentChanged;
-          localStorage.setItem("userData", JSON.stringify(state.userData));
+          localStorage.setItem('userData', JSON.stringify(state.userData));
           break;
         }
       }      
+    },
+    changeFontSize (state, payload) {
+      state.userData.theme['font-size'] += payload.delta;
+      if (state.userData.theme['font-size'] < 1.035) {
+        state.userData.theme['font-size'] = 1.035;
+      }
+      localStorage.setItem('userData', JSON.stringify(state.userData));
     }
   },
   actions: {

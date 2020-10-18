@@ -3,8 +3,12 @@
     <h1 class="chapterName">{{chapterInfo.name}}</h1>
     <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
     <p v-if="loading">正在加载中</p>
-    <p v-else v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
+    <div class="content" v-else>
+      <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
+    </div>
     <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
+    <button class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</button>
+    <button class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</button>
   </article>
 </template>
 
@@ -37,7 +41,12 @@ export default {
     },
     bookFullName() {
       return this.name + '-' + this.author;
-    }
+    },
+    contentStyle() {
+      return {
+        'font-size': this.$store.state.userData.theme['font-size'] + 'em',
+      };
+    },
   },
   created() {
     this.loadChapter();
@@ -136,6 +145,12 @@ export default {
         bookFullName: this.bookFullName,
         contentChanged: false,
       });
+    },
+    changeFontSize(delta) {
+      this.$store.commit({
+        type: 'changeFontSize',
+        delta: delta,
+      });
     }
   },
   title() {
@@ -150,6 +165,17 @@ export default {
 }
 p {
   text-indent: 2em;
-  font-size: 1.235em;
+}
+.incFontSize {
+  position: fixed;
+  z-index: 100;
+  bottom: 3em;
+  left: 10px;
+}
+.decFontSize {
+  position: fixed;
+  z-index: 100;
+  bottom: 0.5em;
+  left: 10px;
 }
 </style>
