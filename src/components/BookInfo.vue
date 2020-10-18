@@ -1,12 +1,14 @@
 <template>
   <div class="bookInfo">
     <div class="bookCover">
-      <router-link :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'><img :alt="info.name+'封面'" :src="info.cover"></router-link>
+      <router-link :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>
+        <img :alt="info.name+'封面'" :src="info.cover">
+      </router-link>
     </div>
     <dl>
       <dt>
-        <router-link :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>{{info.name}}</router-link>
-        <span>{{info.author}}</span>
+        <router-link class="name" :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>{{info.name}}<span class="redpoint" v-if="contentChanged" /></router-link>
+        <span class="author">{{info.author}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
       <div class="operate">
@@ -34,7 +36,14 @@ export default {
     },
     moveDownEnable() {
       return this.inBookshelf && this.index < this.$store.getters.bookshelfLength - 1;
-    }
+    },
+    contentChanged() {
+      const bookUserData = this.$store.getters.getBookUserData(this.bookFullName);
+      if (!bookUserData) {
+        return false;
+      }
+      return this.inBookshelf && bookUserData.contentChanged;
+    },
   },
   created() {
     console.log('BookInfo info', this.info);
@@ -71,14 +80,25 @@ export default {
 .bookInfo dl dt {
   border-bottom: 1px dotted #A6D3E8;
 }
-.bookInfo dl dt span {
+.bookInfo dl dt .author {
   float: right;
   color: #999;
+}
+.redpoint{
+  vertical-align: top;
+  display:inline-block;
+  height:10px;
+  width:10px;
+  border-radius:10px;
+  background:red;
 }
 .bookInfo dl dd {
   padding: 7px 0 0 0;
   color: #999;
   margin: 0;
+  line-height: 1.4;
+  max-height: 4.2em;
+  overflow-y: hidden;
 }
 .bookCover {
   flex: 2.5;

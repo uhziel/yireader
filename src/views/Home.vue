@@ -14,6 +14,9 @@ export default {
     return {
     };
   },
+  created() {
+    this.$store.dispatch('fetchAllBook');
+  },
   computed: {
     bookInfos() {
       return this.$store.getters.bookInfosInBookshelf;

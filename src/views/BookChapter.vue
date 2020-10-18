@@ -27,7 +27,6 @@ export default {
   },
   computed: {
     bookData() {
-      //return this.$store.state.books[this.bookFullName]
       return this.$store.getters.getBookByFullName(this.bookFullName) ||
         { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} };
     },
@@ -35,11 +34,13 @@ export default {
     lastChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex-1]; },
     nextChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex+1]; },
     bookFullName () {
-      return this.name + "-" + this.author;
+      return this.name + '-' + this.author;
     }
   },
   created() {
     this.loadChapter();
+    this.tryFetchBook();
+    this.setContentChangedToFalse();    
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("chapterIndex: ", this.chapterIndex);
@@ -47,7 +48,9 @@ export default {
   watch: {
     $route() {
       this.loadChapter();
-      document.title = this.chapterInfo.name + " - 易读";
+      this.tryFetchBook();
+      this.setContentChangedToFalse();
+      document.title = this.chapterInfo.name + ' - 易读';
     }
   },
   methods: {
@@ -102,12 +105,33 @@ export default {
       });
     },
     fetchChapterCache(chapterIndex, chapterInfo) {
-      console.log("fetfetchChapterCache ", chapterInfo);
+      console.log('fetchChapterCache ', chapterInfo);
       chapter(chapterInfo).then(res => {
         console.log(res.data);
         this.chapterCache[chapterIndex] = res.data.content.split('\n');
       }).catch(res => {
         console.error(res);
+      });
+    },
+    tryFetchBook() {
+      const book = this.$store.getters.getBookByFullName(this.bookFullName);
+      console.log('tryFetchBook length', book.bookCatalog.length, ' chapterIndex:', this.chapterIndex);
+      const lengthDiff = book.bookCatalog.length - this.chapterIndex;
+      if (lengthDiff < 10) {
+        const bookUserData = this.$store.getters.getBookUserData(this.bookFullName);
+        const timeDiff = Date.now() - bookUserData.lastFetchTime;
+        console.log('tryFetchBook now', Date.now(), ' lastFetchTime:', bookUserData.lastFetchTime,
+          ' timeDiff:', timeDiff);
+        if (timeDiff > 600000 || (lengthDiff === 1 || lengthDiff === 2)) {
+          this.$store.dispatch('fetchBook', book.bookInfo);
+        }
+      }
+    },
+    setContentChangedToFalse() {
+      this.$store.commit({
+        type: 'setContentChanged',
+        bookFullName: this.bookFullName,
+        contentChanged: false,
       });
     }
   },

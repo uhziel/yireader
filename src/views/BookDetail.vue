@@ -56,6 +56,7 @@ export default {
       console.log("fetchBook:", this.bookInfo);
       this.$store.dispatch("fetchBook", this.bookInfo);
     }
+    this.setContentChangedToFalse();
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("bookInfo: ", this.bookInfo)
@@ -67,15 +68,23 @@ export default {
         console.log("fetchBook:", this.bookInfo);
         this.$store.dispatch("fetchBook", this.bookInfo);
       }
+      this.setContentChangedToFalse();
     }
   },
   methods: {
     addToBookshelf() {
-      this.$store.commit("addToBookshelf", this.bookFullName);
+      this.$store.commit('addToBookshelf', this.bookFullName);
+    },
+    setContentChangedToFalse() {
+      this.$store.commit({
+        type: 'setContentChanged',
+        bookFullName: this.bookFullName,
+        contentChanged: false,
+      });
     }
   },
   title() {
-    return this.name + " - 易读";
+    return this.name + ' - 易读';
   }
 }
 </script>

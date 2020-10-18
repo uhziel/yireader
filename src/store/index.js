@@ -105,7 +105,7 @@ export default new Vuex.Store({
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
-        {fullName: bookFullName, chapterIndex: -1, lastFetchTime: 0});
+        {fullName: bookFullName, chapterIndex: -1, lastFetchTime: 0, contentChanged: false});
       localStorage.setItem("userData", JSON.stringify(state.userData));
     },
     removeFromBookshelf (state, indexInBookshelf) {
@@ -131,7 +131,7 @@ export default new Vuex.Store({
       localStorage.setItem("userData", JSON.stringify(state.userData));
     },
     setReading (state, payload) {
-      console.log('setReading bookFullName:', payload.bookFullName, "index:", payload.chapterIndex);
+      console.log('setReading bookFullName:', payload.bookFullName, " index:", payload.chapterIndex);
       for (const bookUserData of state.userData.bookshelf) {
         if (bookUserData.fullName === payload.bookFullName) {
           bookUserData.chapterIndex = payload.chapterIndex;
@@ -139,19 +139,71 @@ export default new Vuex.Store({
           break;
         }
       }
+    },
+    setLastFetchTime (state, payload) {
+      console.log('setLastFetchTime bookFullName:', payload.bookFullName, " lastFetchTime:", payload.lastFetchTime);
+      for (const bookUserData of state.userData.bookshelf) {
+        if (bookUserData.fullName === payload.bookFullName) {
+          bookUserData.lastFetchTime = payload.lastFetchTime;
+          localStorage.setItem("userData", JSON.stringify(state.userData));
+          break;
+        }
+      }
+    },
+    setContentChanged (state, payload) {
+      console.log('setContentChanged bookFullName:', payload.bookFullName,
+        " contentChanged:", payload.contentChanged);
+      for (const bookUserData of state.userData.bookshelf) {
+        if (bookUserData.fullName === payload.bookFullName) {
+          bookUserData.contentChanged = payload.contentChanged;
+          localStorage.setItem("userData", JSON.stringify(state.userData));
+          break;
+        }
+      }      
     }
   },
   actions: {
-    async fetchBook ({commit}, bookInfo) {
+    async fetchBook ({commit, getters}, bookInfo) {
+      console.log('fetchBook ', bookInfo);
       try {
         let bookDetail = (await api.detail(bookInfo)).data;
         let bookCatalog = (await api.catalog(bookDetail)).data;
         let book = {
           bookDetail, bookCatalog, bookInfo
         };
-        commit("updateBook", book);
+        let fullName = book.bookInfo.name + "-" + book.bookInfo.author;
+        commit('updateBook', book);
+        commit({
+          type: 'setLastFetchTime',
+          bookFullName: fullName,
+          lastFetchTime: Date.now(),
+        });
+        let oldBook = getters.getBookByFullName(fullName);
+        if (oldBook) {
+          if (oldBook.bookCatalog.length !== book.bookCatalog.length) {
+            commit({
+              type: 'setContentChanged',
+              bookFullName: fullName,
+              contentChanged: true,
+            });
+          }
+        }
       } catch (e) {
         console.error(e);
+      }
+    },
+    async fetchAllBook({state, getters, dispatch}) {
+      console.log('fetchAllBook');
+      const now = Date.now();
+      for (const bookUserData of state.userData.bookshelf) {
+        const timeDiff = now - bookUserData.lastFetchTime;
+        console.log('fetchAllBook timeDiff:', timeDiff);
+        if (timeDiff > 600000) {
+          const book = getters.getBookByFullName(bookUserData.fullName);
+          if (book) {
+            await dispatch('fetchBook', book.bookInfo);
+          }
+        }
       }
     }
   },
