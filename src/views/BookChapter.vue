@@ -32,8 +32,10 @@ export default {
     },
     chapterInfo() { return this.bookData.bookCatalog[this.chapterIndex]; },
     lastChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex-1]; },
-    nextChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex+1]; },
-    bookFullName () {
+    nextChapterInfo() {
+      return this.bookData.bookCatalog[parseInt(this.chapterIndex)+1];
+    },
+    bookFullName() {
       return this.name + '-' + this.author;
     }
   },
@@ -44,6 +46,7 @@ export default {
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("chapterIndex: ", this.chapterIndex);
+    console.log('chapterIndex type: ', typeof this.chapterIndex);
   },
   watch: {
     $route() {

@@ -1,5 +1,6 @@
 <template>
   <div class="search">
+    <p v-if="isSearchEmpty">搜索"{{searchKey}}"：没找到你想找的书</p>
     <BookInfo v-for="(bookInfo, index) in searchResult" :key="index" :index="index" :info="bookInfo" />
   </div>
 </template>
@@ -15,7 +16,15 @@ export default {
     BookInfo
   },
   data() {
-    return { searchResult: [] };
+    return {
+      searchResult: [],
+      searching: true,
+    };
+  },
+  computed: {
+    isSearchEmpty() {
+      return !this.searching && this.searchResult.length === 0;
+    }
   },
   created() {
     console.log("searchBook ", this.searchKey);
@@ -31,6 +40,7 @@ export default {
       search(searchKey).then(res => {
         console.log(res.data);
         this.searchResult = res.data;
+        this.searching = false;
       }).catch(res => {
         console.error(res);
       });
