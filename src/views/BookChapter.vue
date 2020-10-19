@@ -165,16 +165,23 @@ export default {
 }
 p {
   text-indent: 2em;
+  /* via https://perishablepress.com/wrapping-content/ */
+	white-space: pre;           /* CSS 2.0 */
+	white-space: pre-wrap;      /* CSS 2.1 */
+	white-space: pre-line;      /* CSS 3.0 */
+	white-space: -pre-wrap;     /* Opera 4-6 */
+	white-space: -o-pre-wrap;   /* Opera 7 */
+	white-space: -moz-pre-wrap; /* Mozilla */
+	white-space: -hp-pre-wrap;  /* HP Printers */
+	word-wrap: break-word;      /* IE 5+ */
 }
 .incFontSize {
   position: fixed;
-  z-index: 100;
   bottom: 3em;
   left: 10px;
 }
 .decFontSize {
   position: fixed;
-  z-index: 100;
   bottom: 0.5em;
   left: 10px;
 }
