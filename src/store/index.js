@@ -196,13 +196,13 @@ export default new Vuex.Store({
           bookDetail, bookCatalog, bookInfo
         };
         let fullName = book.bookInfo.name + "-" + book.bookInfo.author;
+        let oldBook = getters.getBookByFullName(fullName);
         commit('updateBook', book);
         commit({
           type: 'setLastFetchTime',
           bookFullName: fullName,
           lastFetchTime: Date.now(),
         });
-        let oldBook = getters.getBookByFullName(fullName);
         if (oldBook) {
           if (oldBook.bookCatalog.length !== book.bookCatalog.length) {
             commit({
