@@ -1,62 +1,60 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link class="navItem" to="/">首页</router-link>
-      <router-link class="navItem" to="/about">书源</router-link>
-      <SearchBar class="navSearch"/>
-    </nav>
-    <main role="main">
-      <router-view/>
-    </main>
-  </div>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <div class="d-flex align-center">
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <v-img
+          alt="Vuetify Name"
+          class="shrink mt-1 hidden-sm-and-down"
+          contain
+          min-width="100"
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          width="100"
+        />
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Latest Release</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <HelloWorld/>
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: "Microsoft YaHei", 微软雅黑, 宋体, Verdana, Geneva, Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding: 10px 10px 5em 10px;
-  color: #2c3e50;
-}
-
-nav {
-  display: flex;
-  border-bottom: 3px solid black;
-  margin-bottom: 8px;
-}
-
-nav .navItem {
-  text-align: center;
-  flex: 1;
-  font-size: 1.1em;
-}
-
-nav .navSearch {
-  text-align: right;
-  flex: 6;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: white;
-  background-color: black;
-  text-decoration: none;
-}
-</style>
-
 <script>
-// @ is an alias to /src
-import SearchBar from '@/components/SearchBar.vue'
+import HelloWorld from './components/HelloWorld';
 
 export default {
   name: 'App',
+
   components: {
-    SearchBar
-  }
-}
+    HelloWorld,
+  },
+
+  data: () => ({
+    //
+  }),
+};
 </script>
