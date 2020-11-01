@@ -1,15 +1,17 @@
 <template>
-  <article class="BookChapter">
-    <h1 class="chapterName">{{chapterInfo.name}}</h1>
-    <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
-    <p v-if="loading">正在加载中</p>
-    <div class="content" v-else>
-      <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
-    </div>
-    <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
-    <button class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</button>
-    <button class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</button>
-  </article>
+  <v-container>
+      <article class="BookChapter">
+        <h1 class="chapterName text-h4 text-center">{{chapterInfo.name}}</h1>
+        <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
+        <p v-if="loading">正在加载中</p>
+        <div class="content" v-else>
+          <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
+        </div>
+        <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
+        <button class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</button>
+        <button class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</button>
+      </article>
+  </v-container>
 </template>
 
 <script>
@@ -160,9 +162,6 @@ export default {
 </script>
 
 <style scoped>
-.chapterName {
-  text-align: center;
-}
 p {
   text-indent: 2em;
   /* via https://perishablepress.com/wrapping-content/ */

@@ -19,6 +19,11 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
+    path: '/booksource',
+    name: 'BookSource',
+    component: () => import(/* webpackChunkName: "booksource" */ '../views/BookSource.vue')
+  },
+  {
     path: '/search/:searchKey',
     name: 'Search',
     component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue'),

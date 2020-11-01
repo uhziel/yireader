@@ -1,12 +1,16 @@
 <template>
-  <div class="home">
-    <BookInfo v-for="(bookInfo, index) in bookInfos" :key="index" :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
-  </div>
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <CardBook v-for="(bookInfo, index) in bookInfos" :key="index" :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 // @ is an alias to /src
-import BookInfo from '@/components/BookInfo.vue'
+import CardBook from '@/components/CardBook'
 
 export default {
   name: 'Home',
@@ -29,7 +33,7 @@ export default {
     }
   },
   components: {
-    BookInfo
+    CardBook,
   },
   title: "易读"
 }

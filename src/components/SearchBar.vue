@@ -1,10 +1,12 @@
 <template>
-  <div class="searchBar">
-    <form>
-      <input id="searchKey" type="text" v-model="searchKey" placeholder="可搜书名，少字也别输错字">
-      <button @click.prevent="search">搜索</button>
-    </form>
-  </div>
+  <v-responsive :max-width="$vuetify.breakpoint.xs ? '13rem' : '20rem'">
+    <v-text-field
+    v-model="searchKey"
+    @click:append="search"
+    dense outlined hide-details placeholder="可搜索书名"
+    append-icon="mdi-magnify">
+    </v-text-field>
+  </v-responsive>
 </template>
 
 <script>
@@ -23,10 +25,3 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-#searchKey {
-  margin: 0 5px 0 0;
-}
-</style>
