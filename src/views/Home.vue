@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12">
-        <CardBook v-for="(bookInfo, index) in bookInfos" :key="index" :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
+      <v-col v-for="(bookInfo, index) in bookInfos" :key="index" cols="6" md="3">
+        <CardBook :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
       </v-col>
     </v-row>
   </v-container>

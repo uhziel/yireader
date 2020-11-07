@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <v-sheet max-width="50em" class="mx-auto">
       <article class="BookChapter">
         <h1 class="chapterName text-h4 text-center">{{chapterInfo.name}}</h1>
         <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
@@ -11,6 +12,7 @@
         <button class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</button>
         <button class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</button>
       </article>
+    </v-sheet>
   </v-container>
 </template>
 
@@ -75,6 +77,7 @@ export default {
       if (this.getChapterCache(this.chapterIndex)) {
         console.log("命中缓存:", this.chapterInfo.name);
         this.paragraphs = this.getChapterCache(this.chapterIndex);
+        this.loading = false;
         this.$store.commit({
           type: 'setReading',
           bookFullName: this.bookFullName,

@@ -1,8 +1,9 @@
 <template>
-  <v-responsive :max-width="$vuetify.breakpoint.xs ? '13rem' : '20rem'">
+  <v-responsive :max-width="$vuetify.breakpoint.xs ? '14rem' : '20rem'">
     <v-text-field
     v-model="searchKey"
     @click:append="search"
+    @keyup.enter="search"
     dense outlined hide-details placeholder="可搜索书名"
     append-icon="mdi-magnify">
     </v-text-field>

@@ -15,12 +15,17 @@
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
-      absolute
+      app
       temporary
     >
       <v-list>
         <v-list-item v-for="(item, index) in items" :key="index" :to="item.to" link>
-          {{item.title}}
+          <v-list-item-icon>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            {{item.title}}
+          </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -45,7 +50,7 @@ export default {
   }},
   computed: {
     appBarClass() {
-      return this.$vuetify.breakpoint.xs ? "pa-0  fill-height" : "py-0 fill-height";
+      return this.$vuetify.breakpoint.xs ? "pa-0 fill-height" : "py-0 fill-height";
     }
   },
 }

@@ -1,30 +1,33 @@
 <template>
-  <v-card class="bookInfo my-4" elevation="3" >
-    <div class="d-flex flex-no-wrap">
-      <div class="bookCover ma-1">
-        <router-link :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>
-          <v-img :alt="info.name+'封面'" :src="info.cover"></v-img>
-        </router-link>
-      </div>
-      <div>
-        <v-card :ripple="ripple" elevation="0" :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>
-          <v-card-title>
-              {{info.name}}<span class="redpoint" v-if="contentChanged" />
-          </v-card-title>
-          <v-card-subtitle class="author">{{info.author}}</v-card-subtitle>
-          <v-divider/>
-          <v-card-text>{{info.summary}}</v-card-text>
-        </v-card>
-        <v-card-text class="operate">
-          <span v-if="reading">已读到：<router-link :to='{name:"BookChapter", params:{name:info.name, author:info.author, chapterIndex:reading.chapterIndex}}'>{{reading.chapterName}}</router-link></span>
-        </v-card-text>
-        <v-card-actions class="operate">
-          <v-btn v-if="inBookshelf" @click="removeFromBookshelf">移出</v-btn>
-          <v-btn v-if="inBookshelf" :disabled="!moveUpEnable" @click="moveUp">上移</v-btn>
-          <v-btn v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</v-btn>
-        </v-card-actions>
-      </div>
-    </div>
+  <v-card class="bookInfo my-4" @click="goToBookDetail">
+    <v-img class="mx-auto" :alt="info.name+'的封面'" max-width="150px" :src="info.cover"></v-img>
+    <v-card-title>
+      {{info.name}}<span class="redpoint" v-if="contentChanged" />
+    </v-card-title>
+    <v-card-subtitle >{{info.author}}</v-card-subtitle>
+
+    <v-card-actions class="operate">
+          <v-btn v-if="inBookshelf" @click.stop="removeFromBookshelf" icon>
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+          <v-btn v-if="inBookshelf" :disabled="!moveUpEnable" @click.stop="moveUp" icon>
+            <v-icon>mdi-arrow-up-bold</v-icon>
+          </v-btn>
+          <v-btn v-if="inBookshelf" :disabled="!moveDownEnable" @click.stop="moveDown" icon>
+            <v-icon>mdi-arrow-down-bold</v-icon>
+          </v-btn>
+    </v-card-actions>
+
+    <v-expansion-panels>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+        简介
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          {{info.summary}}
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </v-card>
 </template>
 
@@ -70,6 +73,9 @@ export default {
     },
     moveDown() {
       this.$store.commit('moveDownInBookshelf', this.index);
+    },
+    goToBookDetail() {
+      this.$router.push({name:"BookDetail", params:{name: this.info.name, author:this.info.author}, query: this.info});
     },
   },
 }
