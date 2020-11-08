@@ -50,8 +50,11 @@ export default {
     moveDownEnable() {
       return this.inBookshelf && this.index < this.$store.getters.bookshelfLength - 1;
     },
+    bookUserData() {
+      return this.$store.getters.getBookUserData(this.bookFullName);
+    },
     contentChanged() {
-      const bookUserData = this.$store.getters.getBookUserData(this.bookFullName);
+      const bookUserData = this.bookUserData;
       if (!bookUserData) {
         return false;
       }
@@ -75,7 +78,24 @@ export default {
       this.$store.commit('moveDownInBookshelf', this.index);
     },
     goToBookDetail() {
-      this.$router.push({name:"BookDetail", params:{name: this.info.name, author:this.info.author}, query: this.info});
+      const bookUserData = this.bookUserData;
+      let chapterIndex = 0;
+      let chapterScrollY = 0.0;
+      if (bookUserData) {
+        chapterIndex = bookUserData.chapterIndex;
+        chapterScrollY = bookUserData.chapterScrollY;
+      }
+      this.$router.push({
+        name: "BookChapter",
+        params: {
+          name: this.info.name,
+          author: this.info.author,
+          chapterIndex: chapterIndex,
+        },
+        query: {
+          chapterScrollY: chapterScrollY,
+        },
+        });
     },
   },
 }

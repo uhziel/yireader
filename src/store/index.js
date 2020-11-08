@@ -17,7 +17,7 @@ export default new Vuex.Store({
   state: {
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }>
     userData: { 
-      bookshelf: [], //{fullName: "", chapterIndex: -1, lastFetchTime: 0}
+      bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0}
       theme: {
         'font-size': 1.235
       },
@@ -74,6 +74,7 @@ export default new Vuex.Store({
         }
         return {
           chapterIndex,
+          chapterScrollY: bookUserData.chapterScrollY,
           chapterName: book.bookCatalog[chapterIndex].name
         };
       };
@@ -122,7 +123,7 @@ export default new Vuex.Store({
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
-        {fullName: bookFullName, chapterIndex: -1, lastFetchTime: 0, contentChanged: false});
+        {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0, contentChanged: false});
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     removeFromBookshelf (state, indexInBookshelf) {
@@ -148,10 +149,13 @@ export default new Vuex.Store({
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     setReading (state, payload) {
-      console.log('setReading bookFullName:', payload.bookFullName, " index:", payload.chapterIndex);
+      console.log('setReading bookFullName:', payload.bookFullName,
+        " index:", payload.chapterIndex,
+        " scrollY:", payload.chapterScrollY);
       for (const bookUserData of state.userData.bookshelf) {
         if (bookUserData.fullName === payload.bookFullName) {
           bookUserData.chapterIndex = payload.chapterIndex;
+          bookUserData.chapterScrollY = payload.chapterScrollY;
           localStorage.setItem('userData', JSON.stringify(state.userData));
           break;
         }

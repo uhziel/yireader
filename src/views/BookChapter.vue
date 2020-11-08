@@ -46,13 +46,25 @@ export default {
     bookFullName() {
       return this.name + '-' + this.author;
     },
+    bookUserData() {
+      return this.$store.getters.getBookUserData(this.bookFullName);
+    },
     contentStyle() {
       return {
         'font-size': this.$store.state.userData.theme['font-size'] + 'em',
       };
     },
+    chapterScrollY() {
+      const scrollY = this.$route.query.chapterScrollY;
+      if (!scrollY) {
+        return 0.0;
+      } else {
+        return scrollY;
+      }
+    },
   },
   created() {
+    console.log("BookChapter created");
     this.loadChapter();
     this.tryFetchBook();
     this.setContentChangedToFalse();    
@@ -61,8 +73,19 @@ export default {
     console.log("chapterIndex: ", this.chapterIndex);
     console.log('chapterIndex type: ', typeof this.chapterIndex);
   },
+  beforeRouteLeave(to, from, next) {
+    console.log("beforeRouteLeave scrollY:", window.scrollY);
+    this.$store.commit({
+      type: 'setReading',
+      bookFullName: this.bookFullName,
+      chapterIndex: this.chapterIndex,
+      chapterScrollY: window.scrollY,
+    });
+    next();
+  },
   watch: {
     $route() {
+      console.log("BookChapter route");
       this.loadChapter();
       this.tryFetchBook();
       this.setContentChangedToFalse();
@@ -77,11 +100,15 @@ export default {
       if (this.getChapterCache(this.chapterIndex)) {
         console.log("命中缓存:", this.chapterInfo.name);
         this.paragraphs = this.getChapterCache(this.chapterIndex);
+        this.$nextTick(function () {
+          window.scrollTo(0, this.chapterScrollY);
+        });
         this.loading = false;
         this.$store.commit({
           type: 'setReading',
           bookFullName: this.bookFullName,
-          chapterIndex: this.chapterIndex
+          chapterIndex: this.chapterIndex,
+          chapterScrollY: 0.0,
         });
       } else {
         this.fetchChapter(this.chapterIndex, this.chapterInfo)
@@ -111,10 +138,14 @@ export default {
         console.log(res.data);
         this.loading = false;
         this.paragraphs = res.data.content.split('\n');
+        this.$nextTick(function () {
+          window.scrollTo(0, this.chapterScrollY);
+        });
         this.$store.commit({
           type: 'setReading',
           bookFullName: this.bookFullName,
-          chapterIndex: chapterIndex
+          chapterIndex: chapterIndex,
+          chapterScrollY: 0.0,
         });
         this.chapterCache[chapterIndex] = this.paragraphs;
       }).catch(res => {
@@ -135,9 +166,8 @@ export default {
       console.log('tryFetchBook length', book.bookCatalog.length, ' chapterIndex:', this.chapterIndex);
       const lengthDiff = book.bookCatalog.length - this.chapterIndex;
       if (lengthDiff < 10) {
-        const bookUserData = this.$store.getters.getBookUserData(this.bookFullName);
-        const timeDiff = Date.now() - bookUserData.lastFetchTime;
-        console.log('tryFetchBook now', Date.now(), ' lastFetchTime:', bookUserData.lastFetchTime,
+        const timeDiff = Date.now() - this.bookUserData.lastFetchTime;
+        console.log('tryFetchBook now', Date.now(), ' lastFetchTime:', this.bookUserData.lastFetchTime,
           ' timeDiff:', timeDiff);
         if (timeDiff > 600000 || (lengthDiff === 1 || lengthDiff === 2)) {
           this.$store.dispatch('fetchBook', book.bookInfo);
