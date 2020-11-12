@@ -17,7 +17,7 @@
         <button v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</button>
       </div>
       <div class="process">
-        <span v-if="reading">已读到：<router-link :to='{name:"BookChapter", params:{name:info.name, author:info.author, chapterIndex:reading.chapterIndex}}'>{{reading.chapterName}}</router-link></span>
+        <span v-if="reading">已读到：<router-link :to="detailRoute">{{reading.chapterName}}</router-link></span>
       </div>
     </dl>
   </div>
@@ -48,12 +48,22 @@ export default {
       return this.inBookshelf && bookUserData.contentChanged;
     },
     detailRoute() {
+      if (!this.inBookshelf) {
+        return {
+          name:"BookDetail",
+          params:{name: this.info.name, author:this.info.author},
+          query: this.info
+        };
+      }
       const bookUserData = this.bookUserData;
       let chapterIndex = 0;
       let chapterScrollY = 0.0;
       if (bookUserData) {
         chapterIndex = bookUserData.chapterIndex;
         chapterScrollY = bookUserData.chapterScrollY;
+      }
+      if (chapterIndex === -1) {
+        chapterIndex = 0;
       }
       return {
         name: "BookChapter",
@@ -83,26 +93,6 @@ export default {
     },
     moveDown() {
       this.$store.commit('moveDownInBookshelf', this.index);
-    },
-    goToBookDetail() {
-      const bookUserData = this.bookUserData;
-      let chapterIndex = 0;
-      let chapterScrollY = 0.0;
-      if (bookUserData) {
-        chapterIndex = bookUserData.chapterIndex;
-        chapterScrollY = bookUserData.chapterScrollY;
-      }
-      this.$router.push({
-        name: "BookChapter",
-        params: {
-          name: this.info.name,
-          author: this.info.author,
-          chapterIndex: chapterIndex,
-        },
-        query: {
-          chapterScrollY: chapterScrollY,
-        },
-      });    
     },
   },
 }
