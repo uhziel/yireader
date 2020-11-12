@@ -1,13 +1,13 @@
 <template>
   <div class="bookInfo">
     <div class="bookCover">
-      <router-link :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>
+      <router-link :to="detailRoute">
         <img :alt="info.name+'封面'" :src="info.cover">
       </router-link>
     </div>
     <dl>
       <dt>
-        <router-link class="name" :to='{name:"BookDetail", params:{name: info.name, author:info.author}, query: info}'>{{info.name}}<span class="redpoint" v-if="contentChanged" /></router-link>
+        <router-link class="name" :to="detailRoute">{{info.name}}<span class="redpoint" v-if="contentChanged" /></router-link>
         <span class="author">{{info.author}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
@@ -37,12 +37,35 @@ export default {
     moveDownEnable() {
       return this.inBookshelf && this.index < this.$store.getters.bookshelfLength - 1;
     },
+    bookUserData() {
+      return this.$store.getters.getBookUserData(this.bookFullName);
+    },
     contentChanged() {
-      const bookUserData = this.$store.getters.getBookUserData(this.bookFullName);
+      const bookUserData = this.bookUserData;
       if (!bookUserData) {
         return false;
       }
       return this.inBookshelf && bookUserData.contentChanged;
+    },
+    detailRoute() {
+      const bookUserData = this.bookUserData;
+      let chapterIndex = 0;
+      let chapterScrollY = 0.0;
+      if (bookUserData) {
+        chapterIndex = bookUserData.chapterIndex;
+        chapterScrollY = bookUserData.chapterScrollY;
+      }
+      return {
+        name: "BookChapter",
+        params: {
+          name: this.info.name,
+          author: this.info.author,
+          chapterIndex: chapterIndex,
+        },
+        query: {
+          chapterScrollY: chapterScrollY,
+        },
+      };
     },
   },
   created() {
@@ -60,6 +83,26 @@ export default {
     },
     moveDown() {
       this.$store.commit('moveDownInBookshelf', this.index);
+    },
+    goToBookDetail() {
+      const bookUserData = this.bookUserData;
+      let chapterIndex = 0;
+      let chapterScrollY = 0.0;
+      if (bookUserData) {
+        chapterIndex = bookUserData.chapterIndex;
+        chapterScrollY = bookUserData.chapterScrollY;
+      }
+      this.$router.push({
+        name: "BookChapter",
+        params: {
+          name: this.info.name,
+          author: this.info.author,
+          chapterIndex: chapterIndex,
+        },
+        query: {
+          chapterScrollY: chapterScrollY,
+        },
+      });    
     },
   },
 }
