@@ -32,7 +32,7 @@ export default {
   computed: {
     bookData() {
       return this.$store.getters.getBookByFullName(this.bookFullName) ||
-        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} };
+        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {}};
     },
     chapterInfo() { return this.bookData.bookCatalog[this.chapterIndex]; },
     lastChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex-1]; },
@@ -61,6 +61,7 @@ export default {
   },
   created() {
     console.log("BookChapter created");
+    this.init();
     this.loadChapter();
     this.tryFetchBook();
     this.setContentChangedToFalse();    
@@ -77,11 +78,17 @@ export default {
       chapterIndex: this.chapterIndex,
       chapterScrollY: window.scrollY,
     });
+    this.$store.dispatch({
+        type: 'setBookChapters',
+        bookFullName: this.bookFullName,
+        bookChapters: this.chapterCache,
+    });
     next();
   },
   watch: {
     $route() {
       console.log("BookChapter route");
+      this.init();
       this.loadChapter();
       this.tryFetchBook();
       this.setContentChangedToFalse();
@@ -89,6 +96,11 @@ export default {
     }
   },
   methods: {
+    init() {
+      if (this.bookData.bookChapters) {
+        this.chapterCache = this.bookData.bookChapters;
+      }
+    },
     getChapterCache(chapterIndex) {
       return this.chapterCache[chapterIndex];
     },

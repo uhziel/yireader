@@ -10,7 +10,9 @@
           <dd>
             <p>作者：{{bookInfo.author}}</p>
             <p>最新章节：{{bookData.bookDetail.lastChapter}}</p>
-              <p>书架：<button v-if="!inBookShelf" @click="addToBookshelf()">加入</button><span v-else>已加入</span>
+              <p>书架：
+                <button v-if="!inBookShelf" :disabled="disableAddToBookshelf" @click="addToBookshelf()">加入</button>
+                <span v-else>已加入</span>
               </p>
           </dd>
         </dl>
@@ -38,17 +40,19 @@ export default {
     }
   },
   computed: {
-    bookData() { 
-      //return this.$store.state.books[this.bookFullName] ||
+    bookData() {
       return this.$store.getters.getBookByFullName(this.bookFullName) ||
-        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }; 
+        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {}, }; 
     },
     inBookShelf() {
       return this.$store.getters.isInBookshelf(this.bookFullName);
     },
     bookFullName() {
       return this.name + "-" + this.author;
-    }
+    },
+    disableAddToBookshelf() {
+      return !(this.$store.getters.getBookByFullName(this.bookFullName));
+    },
   },
   created() {
     this.bookInfo = this.$route.query;

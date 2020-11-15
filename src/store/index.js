@@ -15,7 +15,7 @@ function isInBookshelf(bookshelf, bookFullName) {
 
 export default new Vuex.Store({
   state: {
-    books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {} }>
+    books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {} }>
     userData: { 
       bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0}
       theme: {
@@ -188,7 +188,7 @@ export default new Vuex.Store({
         state.userData.theme['font-size'] = 1.035;
       }
       localStorage.setItem('userData', JSON.stringify(state.userData));
-    }
+    },
   },
   actions: {
     async fetchBook ({commit, getters}, bookInfo) {
@@ -196,11 +196,15 @@ export default new Vuex.Store({
       try {
         let bookDetail = (await api.detail(bookInfo)).data;
         let bookCatalog = (await api.catalog(bookDetail)).data;
+        let bookChapters = {};
         let book = {
-          bookDetail, bookCatalog, bookInfo
+          bookDetail, bookCatalog, bookInfo, bookChapters
         };
         let fullName = book.bookInfo.name + "-" + book.bookInfo.author;
         let oldBook = getters.getBookByFullName(fullName);
+        if (oldBook) {
+          book.bookChapters = oldBook.bookChapters;
+        }
         commit('updateBook', book);
         commit({
           type: 'setLastFetchTime',
@@ -233,7 +237,16 @@ export default new Vuex.Store({
           }
         }
       }
-    }
+    },
+    setBookChapters ({commit, getters}, payload) {
+      console.log("setBookChapters bookFullName:", payload.bookFullName);
+      const book = getters.getBookByFullName(payload.bookFullName);
+      if (!book) {
+        return;
+      }
+      book.bookChapters = payload.bookChapters;
+      commit('updateBook', book);
+    },
   },
   modules: {
   }
