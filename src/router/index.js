@@ -38,15 +38,26 @@ Vue.use(VueRouter)
   },
 ]
 
+function scrollBehavior(to, from, savedPosition) {
+  if (savedPosition) {
+    return savedPosition;
+  }
+
+  if (to.name === 'BookChapter') {
+    return new Promise( resolve => {
+      this.app.$root.$once('scroll-to', function(scrollY) {
+        console.log('scroll-to y:', scrollY);
+        resolve({x: 0, y: scrollY});
+      })
+    });
+  }
+  
+  return { x: 0, y: 0 }; 
+}
+
 const router = new VueRouter({
   routes,
-  scrollBehavior (to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { x: 0, y: 0 };
-    }
-  }
+  scrollBehavior
 })
 
 export default router

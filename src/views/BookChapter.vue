@@ -109,7 +109,7 @@ export default {
         console.log("命中缓存:", this.chapterInfo.name);
         this.paragraphs = this.getChapterCache(this.chapterIndex);
         this.$nextTick(function () {
-          window.scrollTo(0, this.chapterScrollY);
+          this.$root.$emit('scroll-to', this.chapterScrollY);
         });
         this.loading = false;
         this.$store.commit({
@@ -147,7 +147,7 @@ export default {
         this.loading = false;
         this.paragraphs = res.data.content.split('\n');
         this.$nextTick(function () {
-          window.scrollTo(0, this.chapterScrollY);
+          this.$root.$emit('scroll-to', this.chapterScrollY);
         });
         this.$store.commit({
           type: 'setReading',
