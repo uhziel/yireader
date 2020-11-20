@@ -26,7 +26,8 @@ export default {
     return {
       paragraphs: [],
       chapterCache: {},
-      loading: true
+      loading: true,
+      readingTimeoutId: null,
     };
   },
   computed: {
@@ -69,6 +70,14 @@ export default {
     console.log("author: ", this.author);
     console.log("chapterIndex: ", this.chapterIndex);
     console.log('chapterIndex type: ', typeof this.chapterIndex);
+  },
+  beforeMount() {
+    console.log("BookChapter beforeMount");
+    window.addEventListener('scroll', this.onScroll);
+  },
+  beforeDestroy() {
+    console.log("BookChapter beforeDestroy");
+    window.removeEventListener('scroll', this.onScroll);
   },
   beforeRouteLeave(to, from, next) {
     console.log("beforeRouteLeave scrollY:", window.scrollY);
@@ -193,6 +202,21 @@ export default {
       this.$store.commit({
         type: 'changeFontSize',
         delta: delta,
+      });
+    },
+    onScroll() {
+      if (this.readingTimeoutId) {
+        window.clearTimeout(this.readingTimeoutId);
+      }
+      this.readingTimeoutId = window.setTimeout(this.recordReadingPos.bind(this), 1000);
+    },
+    recordReadingPos() {
+      this.readingTimeoutId = null;
+      this.$store.commit({
+        type: 'setReading',
+        bookFullName: this.bookFullName,
+        chapterIndex: this.chapterIndex,
+        chapterScrollY: window.scrollY,
       });
     }
   },
