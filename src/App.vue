@@ -21,15 +21,19 @@
 }
 
 nav {
+  position: sticky;
+  top: 0;
+  padding: 10px;
+  background: white;
   display: flex;
-  border-bottom: 3px solid black;
   margin-bottom: 8px;
+  font-weight: bold;
 }
 
 nav .navItem {
   text-align: center;
   flex: 1;
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 
 nav .navSearch {
