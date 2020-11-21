@@ -28,6 +28,7 @@ export default {
       chapterCache: {},
       loading: true,
       readingTimeoutId: null,
+      lastChapterScrollY: 0.0,
     };
   },
   computed: {
@@ -51,18 +52,15 @@ export default {
         'font-size': this.$store.state.userData.theme['font-size'] + 'em',
       };
     },
-    chapterScrollY() {
-      const scrollY = this.$route.query.chapterScrollY;
-      if (!scrollY) {
-        return 0.0;
-      } else {
-        return scrollY;
-      }
-    },
   },
   created() {
     console.log("BookChapter created");
     this.init();
+    const userData = this.bookUserData;
+    if (userData && userData.chapterScrollY) {
+      console.log("set lastChapterScrollY:", userData.chapterScrollY);
+      this.lastChapterScrollY = userData.chapterScrollY;
+    }
     this.loadChapter();
     this.tryFetchBook();
     this.setContentChangedToFalse();    
@@ -81,6 +79,10 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     console.log("beforeRouteLeave scrollY:", window.scrollY);
+    if (this.readingTimeoutId) {
+      window.clearTimeout(this.readingTimeoutId);
+      this.readingTimeoutId = null;
+    }
     this.$store.commit({
       type: 'setReading',
       bookFullName: this.bookFullName,
@@ -118,14 +120,15 @@ export default {
         console.log("命中缓存:", this.chapterInfo.name);
         this.paragraphs = this.getChapterCache(this.chapterIndex);
         this.$nextTick(function () {
-          this.$root.$emit('scroll-to', this.chapterScrollY);
+          this.$root.$emit('scroll-to', this.lastChapterScrollY);
+          this.lastChapterScrollY = 0.0;
         });
         this.loading = false;
         this.$store.commit({
           type: 'setReading',
           bookFullName: this.bookFullName,
           chapterIndex: this.chapterIndex,
-          chapterScrollY: 0.0,
+          chapterScrollY: window.scrollY,
         });
       } else {
         this.fetchChapter(this.chapterIndex, this.chapterInfo)
@@ -156,13 +159,14 @@ export default {
         this.loading = false;
         this.paragraphs = res.data.content.split('\n');
         this.$nextTick(function () {
-          this.$root.$emit('scroll-to', this.chapterScrollY);
+          this.$root.$emit('scroll-to', this.lastChapterScrollY);
+          this.lastChapterScrollY = 0.0;
         });
         this.$store.commit({
           type: 'setReading',
           bookFullName: this.bookFullName,
           chapterIndex: chapterIndex,
-          chapterScrollY: 0.0,
+          chapterScrollY: window.scrollY,
         });
         this.chapterCache[chapterIndex] = this.paragraphs;
       }).catch(res => {
@@ -212,6 +216,7 @@ export default {
     },
     recordReadingPos() {
       this.readingTimeoutId = null;
+      console.log("recordReadingPos");
       this.$store.commit({
         type: 'setReading',
         bookFullName: this.bookFullName,

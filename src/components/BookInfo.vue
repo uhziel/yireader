@@ -57,10 +57,8 @@ export default {
       }
       const bookUserData = this.bookUserData;
       let chapterIndex = 0;
-      let chapterScrollY = 0.0;
       if (bookUserData) {
         chapterIndex = bookUserData.chapterIndex;
-        chapterScrollY = bookUserData.chapterScrollY;
       }
       if (chapterIndex === -1) {
         chapterIndex = 0;
@@ -71,10 +69,7 @@ export default {
           name: this.info.name,
           author: this.info.author,
           chapterIndex: chapterIndex,
-        },
-        query: {
-          chapterScrollY: chapterScrollY,
-        },
+        }
       };
     },
   },
