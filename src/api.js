@@ -20,9 +20,14 @@ export function chapter(chapterInfo) {
     return axios.post(`${origin}/chapter`, chapterInfo);
 }
 
+export function booksources() {
+    return axios.get(`${origin}/booksources`);
+}
+
 export default {
     search,
     detail,
     catalog,
-    chapter
+    chapter,
+    booksources
 };

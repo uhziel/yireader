@@ -2,7 +2,7 @@
   <div id="app">
     <nav>
       <router-link class="navItem" to="/">首页</router-link>
-      <router-link class="navItem" to="/about">书源</router-link>
+      <router-link class="navItem" to="/booksources">书源</router-link>
       <SearchBar class="navSearch"/>
     </nav>
     <main role="main">
