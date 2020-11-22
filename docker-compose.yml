@@ -1,0 +1,15 @@
+version: '3.2'
+services:
+  yireader:
+    image: uhziel/yireader
+    restart: always    
+    environment:
+      - NODE_ENV='production'
+    ports:
+      - 3000:3000
+#    volumes:
+#      - type: bind
+#        source: file2.cnf
+#        target: /app/dir2/file2.cnf
+#      - /dir:/app/dir:ro
+#      - /dir2/file1.cnf:/app/dir2/file1.cnf:ro

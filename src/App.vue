@@ -16,7 +16,7 @@
   font-family: "Microsoft YaHei", 微软雅黑, 宋体, Verdana, Geneva, Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 10px 10px 5em 10px;
+  padding: 0 10px 5em 10px;
   color: #2c3e50;
 }
 
