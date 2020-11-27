@@ -21,6 +21,7 @@ export default new Vuex.Store({
       theme: {
         'font-size': 1.235
       },
+      version: 1
     }
   },
   getters: {
@@ -105,7 +106,6 @@ export default new Vuex.Store({
               localStorage.removeItem(bookFullName);
               continue;
             }
-            state.userData.bookshelf
             let book = JSON.parse(bookStr);
             Vue.set(state.books, bookFullName, book);
           } catch (e) {
