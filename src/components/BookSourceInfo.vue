@@ -2,7 +2,7 @@
   <div class="bookSource">
     <dl>
       <dt>{{name}}</dt>
-      <dd>{{url}}</dd>
+      <dd><a :href="fullUrl" target="_blank">{{url}}</a></dd>
     </dl>
   </div>
 </template>
@@ -11,6 +11,11 @@
 export default {
   name: 'BookSourceInfo',
   props: ['name', 'url'],
+  computed: {
+    fullUrl() {
+      return "http://" + this.url;
+    }
+  },
   created() {
   },
   methods: {

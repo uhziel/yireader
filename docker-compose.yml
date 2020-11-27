@@ -6,7 +6,7 @@ services:
     environment:
       - NODE_ENV='production'
     ports:
-      - 3000:3000
+      - 3001:3001
 #    volumes:
 #      - type: bind
 #        source: file2.cnf
