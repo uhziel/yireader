@@ -5,7 +5,7 @@ const origin = "";
 //const origin = "http://192.168.31.203:8888/dev/debug";
 
 export function search(key) {
-    return axios.get(`${origin}/search?key=${key}`);
+    return axios.post(`${origin}/search?key=${key}`);
 }
 
 export function detail(bookInfo) {

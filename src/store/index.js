@@ -196,6 +196,7 @@ export default new Vuex.Store({
       try {
         let bookDetail = (await api.detail(bookInfo)).data;
         let bookCatalog = (await api.catalog(bookDetail)).data;
+        bookCatalog = bookCatalog.filter(entry => entry.url.length > 0);
         let bookChapters = {};
         let book = {
           bookDetail, bookCatalog, bookInfo, bookChapters
