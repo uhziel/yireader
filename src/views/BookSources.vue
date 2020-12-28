@@ -1,5 +1,5 @@
 <template>
-  <div class="bookSource">
+  <div class="bookSources">
     <BookSourceInfo v-for="(booksource, index) in bookSources" :key="index"
       :name="booksource.name" :url="booksource.url" />
   </div>

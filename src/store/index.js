@@ -117,6 +117,12 @@ export default new Vuex.Store({
     },
     updateBook (state, book) {
       console.log("updateBook ", book);
+      if (book.bookInfo.summary.length === 0 && book.bookDetail.summary.length > 0) {
+        book.bookInfo.summary = book.bookDetail.summary;
+      }
+      if (book.bookInfo.cover.length === 0 && book.bookDetail.cover.length > 0) {
+        book.bookInfo.cover = book.bookDetail.cover;
+      }
       let fullName = book.bookInfo.name + "-" + book.bookInfo.author;
       Vue.set(state.books, fullName, book);
       localStorage.setItem(fullName, JSON.stringify(book));

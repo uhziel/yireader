@@ -20,7 +20,7 @@
     </div>
     <div class="summary">
       <div class="title">内容介绍</div>
-      <p>{{bookInfo.summary}}</p>   
+      <p>{{bookData.bookDetail.summary}}</p>   
     </div>
     <div class="catalog">
       <div class="title">目录</div>
