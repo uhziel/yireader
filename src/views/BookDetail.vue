@@ -25,7 +25,7 @@
     <div class="catalog">
       <div class="title">目录</div>
       <p>排序：<button @click="toggleOrder">{{textButtonToggleOrder}}</button></p>
-      <p v-for="(chapter, index) in bookCatalog" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:index}}'>{{chapter.name}}</router-link></p>
+      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
     </div>
   </div>
 </template>
@@ -45,12 +45,20 @@ export default {
       return this.$store.getters.getBookByFullName(this.bookFullName) ||
         { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {}, }; 
     },
-    bookCatalog() {
+    bookCatalogWithIndex() {
       let bookCatalog = this.bookData.bookCatalog;
-      if (this.reverseOrder) {
-        bookCatalog = Array.from(bookCatalog).reverse();
+      let bookCatalogWithIndex = [];
+      for (let i = 0; i < bookCatalog.length; i++) {
+        const chapterWithIndex = {
+          chapter: bookCatalog[i],
+          chapterIndex: i
+        }
+        bookCatalogWithIndex.push(chapterWithIndex);
       }
-      return bookCatalog;
+      if (this.reverseOrder) {
+        bookCatalogWithIndex = Array.from(bookCatalogWithIndex).reverse();
+      }
+      return bookCatalogWithIndex;
     },
     inBookShelf() {
       return this.$store.getters.isInBookshelf(this.bookFullName);
