@@ -13,15 +13,24 @@ function isInBookshelf(bookshelf, bookFullName) {
   return false;
 }
 
+function upgradeUserData(oldUserData, newUserData) {
+  if (oldUserData.version === 1 && newUserData.version === 2) {
+    for (const bookUserData of oldUserData.bookshelf) {
+      bookUserData.reverseOrder = false;
+    }
+  }
+  oldUserData.version = newUserData.version;
+}
+
 export default new Vuex.Store({
   state: {
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {} }>
     userData: { 
-      bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0}
+      bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0, contentChanged: false, reverseOrder: false}
       theme: {
         'font-size': 1.235
       },
-      version: 1
+      version: 2
     }
   },
   getters: {
@@ -46,6 +55,15 @@ export default new Vuex.Store({
     isInBookshelf(state, getters) {
       return function (fullName) {
         return !!getters.getBookUserData(fullName);
+      };
+    },
+    isReverseOrder (stete, getters) {
+      return function (fullName) {
+        const bookUserData = getters.getBookUserData(fullName);
+        if (!bookUserData) {
+          return false;
+        }
+        return bookUserData.reverseOrder;
       };
     },
     bookInfosInBookshelf(state, getters) {
@@ -87,7 +105,9 @@ export default new Vuex.Store({
       let userDataStr = localStorage.getItem("userData");
       if (userDataStr) {
         try {
-          state.userData = JSON.parse(userDataStr);
+          const oldUserData = JSON.parse(userDataStr);
+          upgradeUserData(oldUserData, state.userData);
+          state.userData = oldUserData;
         } catch (e) {
           console.error(e);
           localStorage.removeItem("userData");
@@ -129,7 +149,8 @@ export default new Vuex.Store({
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
-        {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0, contentChanged: false});
+        {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0,
+          lastFetchTime: 0, contentChanged: false, reverseOrder: false});
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     removeFromBookshelf (state, indexInBookshelf) {
@@ -186,7 +207,16 @@ export default new Vuex.Store({
           localStorage.setItem('userData', JSON.stringify(state.userData));
           break;
         }
-      }      
+      }     
+    },
+    setReverseOrder (state, payload) {
+      for (const bookUserData of state.userData.bookshelf) {
+        if (bookUserData.fullName === payload.bookFullName) {
+          bookUserData.reverseOrder = payload.reverseOrder;
+          localStorage.setItem('userData', JSON.stringify(state.userData));
+          break;
+        }
+      }
     },
     changeFontSize (state, payload) {
       state.userData.theme['font-size'] += payload.delta;

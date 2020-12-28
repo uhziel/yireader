@@ -24,7 +24,8 @@
     </div>
     <div class="catalog">
       <div class="title">目录</div>
-      <p v-for="(chapter, index) in bookData.bookCatalog" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:index}}'>{{chapter.name}}</router-link></p>
+      <p>排序：<button @click="toggleOrder">{{textButtonToggleOrder}}</button></p>
+      <p v-for="(chapter, index) in bookCatalog" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:index}}'>{{chapter.name}}</router-link></p>
     </div>
   </div>
 </template>
@@ -44,6 +45,13 @@ export default {
       return this.$store.getters.getBookByFullName(this.bookFullName) ||
         { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {}, }; 
     },
+    bookCatalog() {
+      let bookCatalog = this.bookData.bookCatalog;
+      if (this.reverseOrder) {
+        bookCatalog = Array.from(bookCatalog).reverse();
+      }
+      return bookCatalog;
+    },
     inBookShelf() {
       return this.$store.getters.isInBookshelf(this.bookFullName);
     },
@@ -53,6 +61,16 @@ export default {
     disableAddToBookshelf() {
       return !(this.$store.getters.getBookByFullName(this.bookFullName));
     },
+    reverseOrder() {
+      return this.$store.getters.isReverseOrder(this.bookFullName);
+    },
+    textButtonToggleOrder() {
+      if (this.reverseOrder) {
+        return '正序';
+      } else {
+        return '倒序';
+      }
+    }
   },
   created() {
     this.bookInfo = this.$route.query;
@@ -84,6 +102,13 @@ export default {
         type: 'setContentChanged',
         bookFullName: this.bookFullName,
         contentChanged: false,
+      });
+    },
+    toggleOrder() {
+      this.$store.commit({
+        type: 'setReverseOrder',
+        bookFullName: this.bookFullName,
+        reverseOrder: !this.reverseOrder,
       });
     }
   },
