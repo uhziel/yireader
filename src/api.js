@@ -1,8 +1,15 @@
 import axios from "axios";
 
 const origin = "";
-//const origin = "http://192.168.0.114:8888/dev/debug";
 //const origin = "http://192.168.31.203:8888/dev/debug";
+
+export function setAuthorizationHeader(value) {
+    if (value) {
+        axios.defaults.headers.common['Authorization'] = value;
+    } else {
+        delete axios.defaults.headers.common['Authorization'];
+    }
+}
 
 export function search(key) {
     return axios.post(`${origin}/search?key=${key}`);
@@ -24,10 +31,20 @@ export function booksources() {
     return axios.get(`${origin}/booksources`);
 }
 
+export function login(user) {
+    return axios.post(`${origin}/users/login`, user);
+}
+
+export function register(user) {
+    return axios.post(`${origin}/users/register`, user);
+}
+
 export default {
     search,
     detail,
     catalog,
     chapter,
-    booksources
+    booksources,
+    login,
+    register,
 };
