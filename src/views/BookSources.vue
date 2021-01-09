@@ -1,8 +1,11 @@
 <template>
-  <div class="bookSources">
-    <BookSourceInfo v-for="(booksource, index) in bookSources" :key="index"
-      :name="booksource.name" :url="booksource.url" />
-  </div>
+  <b-container class="bookSources">
+    <b-row cols="1" cols-sm="2" cols-xl="3">
+      <b-col v-for="(booksource, index) in bookSources" :key="index">
+        <BookSourceInfo :name="booksource.name" :url="booksource.url" />
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>

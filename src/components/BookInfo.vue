@@ -11,12 +11,12 @@
         <span class="author">{{info.author}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
-      <div class="operate">
-        <button v-if="inBookshelf" @click="removeFromBookshelf">移出</button>
-        <button v-if="inBookshelf" :disabled="!moveUpEnable" @click="moveUp">上移</button>
-        <button v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</button>
-      </div>
-      <div class="process">
+      <b-button-group class="operate my-3" size="sm">
+        <b-button class="mx-1" variant="danger" v-if="inBookshelf" @click="removeFromBookshelf">移出</b-button>
+        <b-button class="mx-1" variant="secondary" v-if="inBookshelf" :disabled="!moveUpEnable" @click="moveUp">上移</b-button>
+        <b-button class="mx-1" variant="secondary" v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</b-button>
+      </b-button-group>
+      <div>
         <span v-if="reading">已读到：<router-link :to="detailRoute">{{reading.chapterName}}</router-link></span>
       </div>
     </dl>
@@ -125,7 +125,7 @@ export default {
   color: #999;
   margin: 0;
   line-height: 1.4;
-  max-height: 4.2em;
+  max-height: 4.4em;
   overflow-y: hidden;
 }
 .bookCover {
@@ -134,14 +134,5 @@ export default {
 }
 .bookCover img {
   max-width: 100%;
-}
-.operate {
-  padding: 7px 0 0 0;
-}
-.operate button {
-  margin: 0 10px;
-}
-.process {
-  padding: 7px 0 0 0;
 }
 </style>

@@ -1,7 +1,13 @@
 <template>
   <div class="home">
     <p v-if="bookInfos.length === 0">请通过右上角搜索框添加书籍。</p>
-    <BookInfo v-else v-for="(bookInfo, index) in bookInfos" :key="index" :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
+    <b-container v-else>
+      <b-row cols="1">
+        <b-col v-for="(bookInfo, index) in bookInfos" :key="index">
+          <BookInfo :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
+        </b-col>
+      </b-row>  
+    </b-container>
   </div>
 </template>
 

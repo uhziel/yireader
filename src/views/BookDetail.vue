@@ -11,7 +11,7 @@
             <p>作者：{{bookInfo.author}}</p>
             <p>最新章节：{{bookData.bookDetail.lastChapter}}</p>
               <p>书架：
-                <button v-if="!inBookShelf" :disabled="disableAddToBookshelf" @click="addToBookshelf()">加入</button>
+                <b-button size="sm" v-if="!inBookShelf" :disabled="disableAddToBookshelf" @click="addToBookshelf()">加入</b-button>
                 <span v-else>已加入</span>
               </p>
           </dd>
@@ -24,7 +24,7 @@
     </div>
     <div class="catalog">
       <div class="title">目录</div>
-      <p>排序：<button @click="toggleOrder">{{textButtonToggleOrder}}</button></p>
+      <p>排序：<b-button size="sm" @click="toggleOrder">{{textButtonToggleOrder}}</b-button></p>
       <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
     </div>
   </div>
@@ -135,6 +135,7 @@ export default {
   background-color: #222;
   color: white;
   padding-left: 10px;
+  margin: 10px 0;
 }
 .bookCover {
   flex: 3;
