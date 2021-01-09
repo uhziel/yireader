@@ -1,25 +1,23 @@
 <template>
-  <b-container>
-    <b-navbar toggleable="lg" sticky>
-      <b-navbar-brand to="/">易读</b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item to="/booksources">书源</b-nav-item>
-          <b-nav-item to="/about">关于</b-nav-item>
-        </b-navbar-nav>
+  <b-navbar toggleable="lg" sticky>
+    <b-navbar-brand to="/">易读</b-navbar-brand>
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-collapse id="nav-collapse" is-nav>
+      <b-navbar-nav>
+        <b-nav-item to="/booksources">书源</b-nav-item>
+        <b-nav-item to="/about">关于</b-nav-item>
+      </b-navbar-nav>
 
-        <b-navbar-nav class="ml-auto">
-          <SearchBar class="navSearch"/>
+      <b-navbar-nav class="ml-auto">
+        <SearchBar class="navSearch"/>
 
-          <b-nav-item-dropdown text='用户' right>
-            <b-dropdown-item to="/">设置</b-dropdown-item>
-            <b-dropdown-item to="/">登出</b-dropdown-item>
-          </b-nav-item-dropdown>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-  </b-container>
+        <b-nav-item-dropdown text='用户' right>
+          <b-dropdown-item to="/">设置</b-dropdown-item>
+          <b-dropdown-item to="/">登出</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-collapse>
+  </b-navbar>
 </template>
 
 <script>

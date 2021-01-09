@@ -2,7 +2,7 @@
   <div id="app">
     <NavBar />
     <main role="main">
-      <b-container>
+      <b-container class="pb-5" style="max-width: 900px;">
         <router-view/>
       </b-container>
     </main>
