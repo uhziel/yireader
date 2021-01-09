@@ -40,6 +40,9 @@ export default new Vuex.Store({
     isLoggedIn(state) {
       return state.userData.token.length > 0;
     },
+    username(state) {
+      return state.userData.username;
+    },
     authStatus(state) {
       return state.authStatus;
     },

@@ -104,7 +104,7 @@ router.beforeEach((to, from, next) => {
     if (!store.getters.isLoggedIn) {
       next();
     } else {
-      next({name: 'Dashboard'});
+      next({name: 'Home'});
     }
   } else {
     next();

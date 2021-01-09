@@ -11,10 +11,11 @@
       <b-navbar-nav class="ml-auto">
         <SearchBar class="navSearch"/>
 
-        <b-nav-item-dropdown text='用户' right>
-          <b-dropdown-item to="/">设置</b-dropdown-item>
-          <b-dropdown-item to="/">登出</b-dropdown-item>
+        <b-nav-item-dropdown v-if="isLoggedIn" :text="username" right>
+          <b-dropdown-item to="/dashboard">设置</b-dropdown-item>
+          <b-dropdown-item @click="logout">登出</b-dropdown-item>
         </b-nav-item-dropdown>
+        <b-nav-item v-else class="ml-3" to="/login">登录</b-nav-item>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
@@ -27,6 +28,19 @@ export default {
   name: 'NavBar',
   components: {
     SearchBar
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    username() {
+      return this.$store.getters.username;
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.commit('logout');
+    }
   }
 }
 </script>
