@@ -1,10 +1,8 @@
 <template>
-  <div class="searchBar">
-    <form>
-      <input id="searchKey" type="text" v-model="searchKey" placeholder="可搜书名，少字也别输错字">
-      <button @click.prevent="search">搜索</button>
-    </form>
-  </div>
+  <b-nav-form>
+    <b-form-input id="searchKey" v-model="searchKey" size="sm" class="mr-sm-2" placeholder="可搜书名，少字也别输错字"></b-form-input>
+    <b-button size="sm" class="my-2 my-sm-0" type="submit" @click.prevent="search">搜索</b-button>
+  </b-nav-form>
 </template>
 
 <script>
@@ -29,8 +27,5 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-#searchKey {
-  margin: 0 5px 0 0;
-}
+<style>
 </style>
