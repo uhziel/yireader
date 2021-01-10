@@ -12,7 +12,7 @@
         <SearchBar class="navSearch"/>
 
         <b-nav-item-dropdown v-if="isLoggedIn" :text="username" right>
-          <b-dropdown-item to="/dashboard">设置</b-dropdown-item>
+          <b-dropdown-item to="/settings">设置</b-dropdown-item>
           <b-dropdown-item @click="logout">登出</b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item v-else class="ml-3" to="/login">登录</b-nav-item>
