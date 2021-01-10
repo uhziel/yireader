@@ -8,6 +8,9 @@
     <label for="inputPasswordConfirmation" class="sr-only">密码</label>
     <input type="password" id="inputPasswordConfirmation" class="form-control" v-model="password_confirmation" placeholder="请再次确认密码" required>
     <b-button variant="primary" type="submit" @click.prevent="handleSubmit" block>提交</b-button>
+    <div v-if="errors.length > 0" class="mt-3">
+      <b-alert variant="danger" v-for="(error, index) in errors" :key="index" show>{{error}}</b-alert>
+    </div>
   </form>
 </template>
 
@@ -19,40 +22,31 @@
         username: "",
         password: "",
         password_confirmation: "",
-      }
-    },
-    computed: {
-      isLoggedIn() {
-        return this.$store.getters.isLoggedIn;
+        errors: [],
       }
     },
     methods : {
       handleSubmit() {
-        if (this.password === this.password_confirmation && this.password.length > 0) {
-          this.$store.dispatch('register', {
-            username: this.username,
-            password: this.password,
-            password_confirmation: this.password_confirmation,
-          })
-          .then(() => {
-            if (this.isLoggedIn) {
-              if(this.$route.query.nextUrl != null){
-                  this.$router.push(this.$route.query.nextUrl);
-              }
-              else{
-                  this.$router.push('/');
-              }
+        this.$store.dispatch('register', {
+          username: this.username,
+          password: this.password,
+          password_confirmation: this.password_confirmation,
+        })
+        .then((result) => {
+          if (result.ret == 0) {
+            if(this.$route.query.nextUrl != null){
+                this.$router.push(this.$route.query.nextUrl);
             }
-          })
-          .catch(error => {
-              console.error(error);
-          });
-        } else {
-          this.password = ""
-          this.passwordConfirm = ""
-
-          return alert("Passwords do not match");
-        }
+            else{
+                this.$router.push('/');
+            }
+          } else {
+            this.errors = result.errors;
+          }
+        })
+        .catch(error => {
+            console.error(error);
+        });
       }
     }
   }

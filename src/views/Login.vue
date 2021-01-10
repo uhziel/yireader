@@ -7,6 +7,7 @@
     <input type="password" id="inputPassword" class="form-control" v-model="password" placeholder="密码" required>
     <b-button variant="primary" type="submit" @click.prevent="handleSubmit" block>提交</b-button>
     <b-button variant="outline-success" type="submit" to="/register" block>注册</b-button>
+    <b-alert variant="danger" class="mt-3" :show="showAlert">{{error}}</b-alert>
   </form>
 </template>
 
@@ -15,13 +16,14 @@
     data() {
       return {
         username: "",
-        password: ""
+        password: "",
+        error: "",
       }
     },
     computed: {
-      isLoggedIn() {
-        return this.$store.getters.isLoggedIn;
-      }
+      showAlert() {
+        return this.error.length > 0;
+      },
     },
     methods: {
       handleSubmit() {
@@ -30,13 +32,15 @@
               username: this.username,
               password: this.password
           })
-          .then(() => {
-            if (this.isLoggedIn) {
+          .then((result) => {
+            if (result.ret == 0) {
               if (this.$route.query.nextUrl != null){
                 this.$router.push(this.$route.query.nextUrl);
               } else {
                 this.$router.push({name: 'Home'});
               }
+            } else {
+              this.error = result.error;
             }
           })
           .catch(function (error) {

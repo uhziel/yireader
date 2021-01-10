@@ -272,6 +272,7 @@ export default new Vuex.Store({
         } else {
           commit('authFail');
         }
+        return result;
       } catch (e) {
         commit('authFail');
         throw e;
@@ -289,6 +290,7 @@ export default new Vuex.Store({
         } else {
           commit('authFail');
         }
+        return result;
       } catch (e) {
         commit('authFail');
         throw e;
