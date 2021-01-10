@@ -4,7 +4,7 @@
     <label for="inputUsername" class="sr-only">用户名</label>
     <input id="inputUsername" type="text" class="form-control" v-model="username" placeholder="用户名" required>
     <label for="inputPassword" class="sr-only">密码</label>
-    <input type="password" id="inputPassword" class="form-control" v-model="password" placeholder="密码" required>
+    <input type="password" id="inputPassword" class="form-control" v-model="password" placeholder="密码，至少6位" required>
     <label for="inputPasswordConfirmation" class="sr-only">密码</label>
     <input type="password" id="inputPasswordConfirmation" class="form-control" v-model="password_confirmation" placeholder="请再次确认密码" required>
     <b-button variant="primary" type="submit" @click.prevent="handleSubmit" block>提交</b-button>

@@ -296,6 +296,9 @@ export default new Vuex.Store({
         throw e;
       }
     },
+    async changePassword(_, user) {
+      return (await api.changePassword(user)).data;
+    },
     async fetchBook ({commit, getters}, bookInfo) {
       console.log('fetchBook ', bookInfo);
       try {

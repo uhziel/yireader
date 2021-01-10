@@ -39,6 +39,10 @@ export function register(user) {
     return axios.post(`${origin}/users/register`, user);
 }
 
+export function changePassword(user) {
+    return axios.post(`${origin}/users/changepassword`, user);
+}
+
 export default {
     search,
     detail,
@@ -47,4 +51,5 @@ export default {
     booksources,
     login,
     register,
+    changePassword,
 };
