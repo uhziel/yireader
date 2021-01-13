@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import store from '../store'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,30 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
     props: true
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+    meta: {
+      guest: true
+    }
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import(/* webpackChunkName: "register" */ '../views/Register.vue'),
+    meta: {
+      guest: true
+    }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import(/* webpackChunkName: "settings" */ '../views/Settings.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
 ]
 
 function scrollBehavior(to, from, savedPosition) {
@@ -63,6 +88,27 @@ function scrollBehavior(to, from, savedPosition) {
 const router = new VueRouter({
   routes,
   scrollBehavior
-})
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters.isLoggedIn) {
+      next({
+        name: 'Login',
+        query: { nextUrl: to.fullPath }
+      });
+    } else {
+      next();
+    }
+  } else if (to.matched.some(record => record.meta.guest)) {
+    if (!store.getters.isLoggedIn) {
+      next();
+    } else {
+      next({name: 'Home'});
+    }
+  } else {
+    next();
+  }
+});
 
 export default router

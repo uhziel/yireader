@@ -1,5 +1,5 @@
 <template>
-  <div class="chapterNav">
+  <div class="chapterNav mb-3">
     <router-link replace v-if="lastChapterInfo" :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:parseInt(chapterIndex)-1}}'>上一章</router-link>
     <span v-else>没有前一章节</span>
     <router-link :to='{name:"BookDetail", params:{name:bookInfo.name, author:bookInfo.author}, query: bookInfo}'>目录</router-link>
