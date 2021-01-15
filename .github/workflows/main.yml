@@ -68,7 +68,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
-          file: ./Dockerfile
+          file: ./Dockerfile.edge
           push: true
           tags: ${{ steps.prep.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
