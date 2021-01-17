@@ -10,7 +10,7 @@
 
 <script>
 import BookSourceInfo from "@/components/BookSourceInfo"
-import {booksources} from "@/api.js"
+import {booksources} from "../api.js"
 
 export default {
   name: "BookSources",
@@ -35,8 +35,8 @@ export default {
     fetchBookSources() {
       console.log("fetchBookSources");
       booksources().then(res => {
-        console.log("fetchBookSources result:", res.data);
-        this.bookSources = res.data;
+        console.log("fetchBookSources result:", res.data.data.bookSources);
+        this.bookSources = res.data.data.bookSources;
         this.fetching = false;
       }).catch(res => {
         console.error(res);

@@ -28,7 +28,10 @@ export function chapter(chapterInfo) {
 }
 
 export function booksources() {
-    return axios.get(`${origin}/booksources`);
+    const query = `{ "query": "{ bookSources { name url } }"}`;
+    return axios.post(`${origin}/graphql`, query, {
+        headers: {'Content-Type': 'application/json'}
+    });
 }
 
 export function login(user) {
