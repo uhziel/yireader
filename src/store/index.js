@@ -23,6 +23,7 @@ function upgradeUserData(oldUserData, newUserData) {
 }
 
 export default new Vuex.Store({
+  strict: process.env.NODE_ENV !== 'production',
   state: {
     books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {} }>
     userData: { 
