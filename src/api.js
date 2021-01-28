@@ -27,13 +27,6 @@ export function chapter(chapterInfo) {
     return axios.post(`${origin}/chapter`, chapterInfo);
 }
 
-export function booksources() {
-    const query = `{ "query": "{ bookSources { name url } }"}`;
-    return axios.post(`${origin}/graphql`, query, {
-        headers: {'Content-Type': 'application/json'}
-    });
-}
-
 export function login(user) {
     return axios.post(`${origin}/users/login`, user);
 }
@@ -46,13 +39,24 @@ export function changePassword(user) {
     return axios.post(`${origin}/users/changepassword`, user);
 }
 
+export function graphql(query, variables) {
+    const payload = {
+        query,
+        variables
+    };
+
+    return axios.post(`${origin}/graphql`, JSON.stringify(payload), {
+        headers: {'Content-Type': 'application/json'}
+    });
+}
+
 export default {
     search,
     detail,
     catalog,
     chapter,
-    booksources,
     login,
     register,
     changePassword,
+    graphql,
 };

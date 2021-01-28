@@ -2,7 +2,7 @@
   <b-container class="bookSources">
     <b-row cols="1" cols-sm="2" cols-xl="3">
       <b-col v-for="(booksource, index) in bookSources" :key="index">
-        <BookSourceInfo :name="booksource.name" :url="booksource.url" />
+        <BookSourceInfo :content="booksource" :index="index" />
       </b-col>
     </b-row>
   </b-container>
@@ -10,7 +10,6 @@
 
 <script>
 import BookSourceInfo from "@/components/BookSourceInfo"
-import {booksources} from "../api.js"
 
 export default {
   name: "BookSources",
@@ -19,9 +18,12 @@ export default {
   },
   data() {
     return {
-      bookSources: [],
-      fetching: true,
     };
+  },
+  computed: {
+    bookSources() {
+      return this.$store.state.bookSources.all;
+    },
   },
   created() {
     this.fetchBookSources();
@@ -33,14 +35,7 @@ export default {
   },
   methods: {
     fetchBookSources() {
-      console.log("fetchBookSources");
-      booksources().then(res => {
-        console.log("fetchBookSources result:", res.data.data.bookSources);
-        this.bookSources = res.data.data.bookSources;
-        this.fetching = false;
-      }).catch(res => {
-        console.error(res);
-      });
+      this.$store.dispatch('fetchBookSources');
     }
   },
   title: "书源 - 易读"
