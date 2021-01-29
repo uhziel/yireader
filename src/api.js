@@ -12,7 +12,20 @@ export function setAuthorizationHeader(value) {
 }
 
 export function search(key) {
-    return axios.post(`${origin}/search?key=${key}`);
+    const query = `
+        query Search($name: String!) {
+            search(name: $name) {
+                name
+                author
+                summary
+                cover
+                detail
+            }
+        }`;
+    const variables = {
+        name: key
+    };
+    return graphql(query, variables);
 }
 
 export function detail(bookInfo) {

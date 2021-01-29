@@ -7,7 +7,7 @@
 
 <script>
 import BookInfo from '@/components/BookInfo.vue'
-import {search} from "@/api.js"
+import {search} from "../api.js"
 
 export default {
   name: "Search",
@@ -39,7 +39,7 @@ export default {
     searchBook(searchKey) {
       search(searchKey).then(res => {
         console.log(res.data);
-        this.searchResult = res.data;
+        this.searchResult = res.data.data.search;
         this.searching = false;
       }).catch(res => {
         console.error(res);
