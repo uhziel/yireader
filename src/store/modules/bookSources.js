@@ -2,6 +2,7 @@ import {graphql} from "../../api.js"
 
 const state = () => ({
   all: [],
+  error: "",
 });
 
 const getters = {
@@ -10,6 +11,9 @@ const getters = {
 const mutations = {
   setBookSources(state, bookSources) {
     state.all = bookSources;
+  },
+  setError(state, error) {
+    state.error = error;
   },
 };
 
@@ -25,55 +29,70 @@ const actions = {
       commit('setBookSources', res.data.data.bookSources);
     }).catch(e => console.error(e));
   },
-  deleteBookSource({dispatch}, payload) {
+  addBooksource({commit, dispatch}, payload) {
+    const query = `
+      mutation CreateBookSource($downloadUrl: String!) {
+        createBookSource(downloadUrl: $downloadUrl) {
+          id name url version enableSearch
+        }
+      }`;
+    graphql(query, payload).then(res => {
+      if (!res.data.errors) {
+        dispatch('fetchBookSources');
+      } else {
+        commit('setError', res.data.errors[0].message);
+      }
+    }).catch(e => console.error(e));
+  },
+  deleteBooksource({commit, dispatch}, payload) {
     const query = `
       mutation DeleteBookSource($id: ID!) {
         deleteBookSource(id: $id)
       }`;
     graphql(query, payload).then(res => {
-      if (res.data.data && res.data.data.deleteBookSource === true) {
+      if (!res.data.errors) {
         dispatch('fetchBookSources');
       } else {
-        //TODO
+        commit('setError', res.data.errors[0].message);
       }
     }).catch(e => console.error(e));
   },
-  moveUpBooksource({dispatch}, payload) {
+  moveUpBooksource({commit, dispatch}, payload) {
     const query = `
       mutation MoveUpBookSource($id: ID!) {
         moveUpBookSource(id: $id)
       }`;
     graphql(query, payload).then(res => {
-      if (res.data.data && res.data.data.moveUpBookSource === true) {
+      if (!res.data.errors) {
         dispatch('fetchBookSources');
       } else {
-        //TODO
+        commit('setError', res.data.errors[0].message);
       }
     }).catch(e => console.error(e));
   },
-  moveDownBooksource({dispatch}, payload) {
+  moveDownBooksource({commit, dispatch}, payload) {
     const query = `
       mutation MoveDownBookSource($id: ID!) {
         moveDownBookSource(id: $id)
       }`;
     graphql(query, payload).then(res => {
-      if (res.data.data && res.data.data.moveDownBookSource === true) {
+      if (!res.data.errors) {
         dispatch('fetchBookSources');
       } else {
-        //TODO
+        commit('setError', res.data.errors[0].message);
       }
     }).catch(e => console.error(e));
   },
-  enableBooksource({dispatch}, payload) {
+  enableBooksource({commit, dispatch}, payload) {
     const query = `
       mutation EnableBookSource($id: ID!, $value: Boolean) {
         enableSearchBookSource(id: $id, value: $value)  
       }`;
     graphql(query, payload).then(res => {
-      if (res.data.data && res.data.data.enableSearchBookSource === true) {
+      if (!res.data.errors) {
         dispatch('fetchBookSources');
       } else {
-        //TODO
+        commit('setError', res.data.errors[0].message);
       }
     }).catch(e => console.error(e));    
   }
