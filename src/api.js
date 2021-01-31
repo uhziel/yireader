@@ -16,14 +16,63 @@ export function search(key) {
         query Search($name: String!) {
             search(name: $name) {
                 name
-                author
+                author {
+                    name
+                }
                 summary
-                cover
-                detail
+                coverUrl
+                url
+                bookSourceId
             }
         }`;
     const variables = {
         name: key
+    };
+    return graphql(query, variables);
+}
+
+export function book(bookInfo) {
+    const query = `
+        query Book($info: BookInfo!) {
+            book(info: $info) {
+                id name
+                author {
+                    name
+                }
+                coverUrl
+                lastChapter
+                status
+                summary
+                toc {
+                    name
+                    url
+                    chapter
+                }
+            }
+        }`;
+    const variables = {
+        info: bookInfo
+    };
+    return graphql(query, variables);
+}
+
+export function createBook(bookInfo) {
+    const query = `
+        mutation CreateBook($info: BookInfo!) {
+            createBook(info: $info) {
+                id
+                name
+                author {
+                    name
+                }
+                coverUrl
+                summary
+                url
+                bookSource
+            }
+        }`;
+    const variables = {
+        info: bookInfo,
     };
     return graphql(query, variables);
 }
@@ -65,6 +114,8 @@ export function graphql(query, variables) {
 
 export default {
     search,
+    book,
+    createBook,
     detail,
     catalog,
     chapter,

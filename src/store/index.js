@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import api, {setAuthorizationHeader} from "@/api.js";
 import bookSources from './modules/bookSources';
+import books from './modules/books';
 
 Vue.use(Vuex)
 
@@ -360,6 +361,7 @@ export default new Vuex.Store({
     },
   },
   modules: {
-    bookSources
+    bookSources,
+    books,
   }
 })

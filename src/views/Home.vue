@@ -22,11 +22,11 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch('fetchAllBook');
+    this.$store.dispatch('books');
   },
   computed: {
     bookInfos() {
-      return this.$store.getters.bookInfosInBookshelf;
+      return this.$store.state.books.all;
     },
   },
   methods: {

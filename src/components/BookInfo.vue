@@ -2,13 +2,13 @@
   <div class="bookInfo">
     <div class="bookCover">
       <router-link :to="detailRoute">
-        <img :alt="info.name+'封面'" :src="info.cover">
+        <img :alt="info.name+'封面'" :src="info.coverUrl">
       </router-link>
     </div>
     <dl>
       <dt>
         <router-link class="name" :to="detailRoute">{{info.name}}<span class="redpoint" v-if="contentChanged" /></router-link>
-        <span class="author">{{info.author}}</span>
+        <span class="author">{{info.author.name}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
       <b-button-group class="operate my-3" size="sm">
@@ -29,7 +29,7 @@ export default {
   props: ['info', 'reading', 'inBookshelf', 'index'],
   computed: {
     bookFullName() {
-      return this.info.name + '-' + this.info.author;
+      return this.info.name + '-' + this.info.author.name;
     },
     moveUpEnable() {
       return this.inBookshelf && this.index > 0;
@@ -51,7 +51,7 @@ export default {
       if (!this.inBookshelf) {
         return {
           name:"BookDetail",
-          params:{name: this.info.name, author:this.info.author},
+          params:{name: this.info.name, author: this.info.author.name},
           query: this.info
         };
       }
@@ -67,7 +67,7 @@ export default {
         name: "BookChapter",
         params: {
           name: this.info.name,
-          author: this.info.author,
+          author: this.info.author.name,
           chapterIndex: chapterIndex,
         }
       };
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     removeFromBookshelf() {
-      this.$store.commit('removeFromBookshelf', this.index);
+      this.$store.dispatch('deleteBook', this.info.id);
     },
     moveUp() {
       this.$store.commit('moveUpInBookshelf', this.index);
