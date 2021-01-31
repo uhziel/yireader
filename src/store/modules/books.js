@@ -54,6 +54,38 @@ const actions = {
       }
     }).catch(e => console.error(e));
   },
+  moveUpBook({commit, dispatch}, bookSourceId) {
+    const query = `
+      mutation MoveUpBook($id: ID!) {
+        moveUpBook(id: $id)
+      }`;
+    const variables = {
+        id: bookSourceId,
+    };
+    graphql(query, variables).then(res => {
+      if (!res.data.errors) {
+        dispatch('books');
+      } else {
+        commit('setError', res.data.errors[0].message);
+      }
+    }).catch(e => console.error(e));
+  },
+  moveDownBook({commit, dispatch}, bookSourceId) {
+    const query = `
+      mutation MoveDownBook($id: ID!) {
+        moveDownBook(id: $id)
+      }`;
+    const variables = {
+        id: bookSourceId,
+    };
+    graphql(query, variables).then(res => {
+      if (!res.data.errors) {
+        dispatch('books');
+      } else {
+        commit('setError', res.data.errors[0].message);
+      }
+    }).catch(e => console.error(e));
+  }
 };
 
 export default {

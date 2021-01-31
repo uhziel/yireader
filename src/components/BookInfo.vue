@@ -35,7 +35,7 @@ export default {
       return this.inBookshelf && this.index > 0;
     },
     moveDownEnable() {
-      return this.inBookshelf && this.index < this.$store.getters.bookshelfLength - 1;
+      return this.inBookshelf && this.index < this.$store.state.books.all.length - 1;
     },
     bookUserData() {
       return this.$store.getters.getBookUserData(this.bookFullName);
@@ -84,10 +84,10 @@ export default {
       this.$store.dispatch('deleteBook', this.info.id);
     },
     moveUp() {
-      this.$store.commit('moveUpInBookshelf', this.index);
+      this.$store.dispatch('moveUpBook', this.info.id);
     },
     moveDown() {
-      this.$store.commit('moveDownInBookshelf', this.index);
+      this.$store.dispatch('moveDownBook', this.info.id);
     },
   },
 }
