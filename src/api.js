@@ -36,6 +36,7 @@ export function book(bookInfo) {
         query Book($info: BookInfo!) {
             book(info: $info) {
                 id name
+                inBookshelf
                 author {
                     name
                 }
@@ -52,6 +53,17 @@ export function book(bookInfo) {
         }`;
     const variables = {
         info: bookInfo
+    };
+    return graphql(query, variables);
+}
+
+export function addBookToBookShelf(bookId) {
+    const query = `
+        mutation AddBookToBookShelf($id: ID!) {
+            addBookToBookShelf(id: $id)
+        }`;
+    const variables = {
+        id: bookId,
     };
     return graphql(query, variables);
 }

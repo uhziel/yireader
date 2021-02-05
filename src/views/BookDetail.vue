@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import {book, createBook} from '../api'
+import {book, addBookToBookShelf} from '../api'
 
 export default {
   name: "BookDetail",
@@ -42,6 +42,7 @@ export default {
       bookData: {
         id: '',
         name: '',
+        inBookShelf: false,
         author: {
           name: '',
         },
@@ -71,7 +72,7 @@ export default {
       return bookCatalogWithIndex;
     },
     inBookShelf() {
-      return !!(this.bookInfo.id)
+      return !!(this.bookData.inBookshelf)
     },
     bookFullName() {
       return this.name + "-" + this.author;
@@ -107,19 +108,16 @@ export default {
       book(this.bookInfo).then(res => {
         if (!res.data.errors) {
           this.bookData = res.data.data.book;
+          this.bookInfo.bookId = this.bookData.id;
         } else {
           //TODO
         }
       }).catch(e => console.error(e));
     },
     addToBookshelf() {
-      createBook(this.bookInfo).then(res => {
+      addBookToBookShelf(this.bookData.id).then(res => {
         if (!res.data.errors) {
-          this.$router.replace({
-            name: 'BookDetail',
-            params: {name: this.bookInfo.name, author: this.bookInfo.author.name},
-            query: res.data.data.createBook,
-          })
+          this.fetchBook();
         } else {
           //TODO
         }

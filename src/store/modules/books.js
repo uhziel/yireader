@@ -23,6 +23,7 @@ const actions = {
       query Books {
         books {
           id
+          inBookshelf
           name
           author {
             name
@@ -54,13 +55,13 @@ const actions = {
       }
     }).catch(e => console.error(e));
   },
-  moveUpBook({commit, dispatch}, bookSourceId) {
+  moveUpBook({commit, dispatch}, bookId) {
     const query = `
       mutation MoveUpBook($id: ID!) {
         moveUpBook(id: $id)
       }`;
     const variables = {
-        id: bookSourceId,
+        id: bookId,
     };
     graphql(query, variables).then(res => {
       if (!res.data.errors) {
@@ -70,13 +71,13 @@ const actions = {
       }
     }).catch(e => console.error(e));
   },
-  moveDownBook({commit, dispatch}, bookSourceId) {
+  moveDownBook({commit, dispatch}, bookId) {
     const query = `
       mutation MoveDownBook($id: ID!) {
         moveDownBook(id: $id)
       }`;
     const variables = {
-        id: bookSourceId,
+        id: bookId,
     };
     graphql(query, variables).then(res => {
       if (!res.data.errors) {
