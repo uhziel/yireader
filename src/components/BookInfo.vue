@@ -64,7 +64,7 @@ export default {
         chapterIndex = 0;
       }
       return {
-        name: "BookChapter",
+        name: 'BookChapter',
         params: {
           name: this.info.name,
           author: this.info.author.name,

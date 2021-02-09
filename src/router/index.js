@@ -37,7 +37,7 @@ Vue.use(VueRouter)
     props: true
   },
   {
-    path: '/bookchapter/:name-:author/:chapterIndex',
+    path: '/bookchapter/:name-:author-:bookId/:chapterIndex',
     name: 'BookChapter',
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
     props: true

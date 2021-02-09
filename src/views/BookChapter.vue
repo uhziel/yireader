@@ -1,45 +1,57 @@
 <template>
   <b-container tag="article" class="BookChapter">
-    <h1 class="text-center">{{chapterInfo.name}}</h1>
-    <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
     <p v-if="loading">正在加载中</p>
-    <div class="content" v-else>
-      <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
+    <div v-else>
+      <h1 class="text-center">{{bookChapter.name}}</h1>
+      <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
+
+      <div class="content">
+        <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
+      </div>
+      <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
+      <b-button pill class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</b-button>
+      <b-button pill class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</b-button>
     </div>
-    <ChapterNav :bookInfo="bookData.bookInfo" :chapterIndex="chapterIndex" :lastChapterInfo="lastChapterInfo" :nextChapterInfo="nextChapterInfo" />
-    <b-button pill class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</b-button>
-    <b-button pill class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</b-button>
+
   </b-container>
 </template>
 
 <script>
-import {chapter} from "@/api.js";
+import {chapter, graphql} from "../api.js";
 import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
-  name: "BookChapter",
-  props: ["name", "author", "chapterIndex"],
+  name: 'BookChapter',
+  props: ['name', 'author', 'bookId', 'chapterIndex'],
   components: {
     ChapterNav
   },
   data() {
     return {
+      bookChapter: {
+        name: "",
+      },
       paragraphs: [],
-      chapterCache: {},
       loading: true,
       readingTimeoutId: null,
       lastChapterScrollY: 0.0,
     };
   },
   computed: {
-    bookData() {
-      return this.$store.getters.getBookByFullName(this.bookFullName) ||
-        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {}};
+    bookInfo() {
+      return {
+        name: this.name,
+        author: {
+          name: this.author,
+        },
+        bookId: this.bookId,
+      }
     },
-    chapterInfo() { return this.bookData.bookCatalog[this.chapterIndex]; },
-    lastChapterInfo() { return this.bookData.bookCatalog[this.chapterIndex-1]; },
+    prevChapterInfo() {
+      return this.bookChapter && this.bookChapter.prev;
+    },
     nextChapterInfo() {
-      return this.bookData.bookCatalog[parseInt(this.chapterIndex)+1];
+      return this.bookChapter && this.bookChapter.next;
     },
     bookFullName() {
       return this.name + '-' + this.author;
@@ -54,15 +66,13 @@ export default {
     },
   },
   created() {
-    console.log("BookChapter created");
-    this.init();
+    this.tryFetchBookChapter();
     const userData = this.bookUserData;
     if (userData && userData.chapterScrollY) {
       console.log("set lastChapterScrollY:", userData.chapterScrollY);
       this.lastChapterScrollY = userData.chapterScrollY;
     }
-    this.loadChapter();
-    this.tryFetchBook();
+    //this.tryFetchBook();
     this.setContentChangedToFalse();    
     console.log("name: ", this.name);
     console.log("author: ", this.author);
@@ -70,11 +80,9 @@ export default {
     console.log('chapterIndex type: ', typeof this.chapterIndex);
   },
   beforeMount() {
-    console.log("BookChapter beforeMount");
     window.addEventListener('scroll', this.onScroll);
   },
   beforeDestroy() {
-    console.log("BookChapter beforeDestroy");
     window.removeEventListener('scroll', this.onScroll);
   },
   beforeRouteLeave(to, from, next) {
@@ -98,22 +106,46 @@ export default {
   },
   watch: {
     $route() {
-      console.log("BookChapter route");
-      this.init();
-      this.loadChapter();
-      this.tryFetchBook();
+      this.tryFetchBookChapter();
+      //this.tryFetchBook();
       this.setContentChangedToFalse();
-      document.title = this.chapterInfo.name + ' - 易读';
+      document.title = this.bookChapter.name + ' - 易读';
     }
   },
   methods: {
-    init() {
-      if (this.bookData.bookChapters) {
-        this.chapterCache = this.bookData.bookChapters;
-      }
-    },
-    getChapterCache(chapterIndex) {
-      return this.chapterCache[chapterIndex];
+    tryFetchBookChapter() {
+      const query = `
+        query BookChapter($info: BookChapterInfo!) {
+          bookChapter(info: $info) {
+            index
+            name
+            data
+            prev {
+              index
+              name
+            }
+            next {
+              index
+              name
+            }
+          }
+        }`;
+      const variables = {
+          info: {
+            bookId: this.bookId,
+            bookChapterIndex: parseInt(this.chapterIndex),
+          }
+      };
+      graphql(query, variables).then(res => {
+        if (!res.data.errors) {
+          this.bookChapter = res.data.data.bookChapter;
+          this.paragraphs = res.data.data.bookChapter.data.split('\n');
+          this.loading = false;
+        } else {
+          //TODO 错误提示
+          console.error(res.data.errors);
+        }
+      }).catch(e => console.error(e));
     },
     loadChapter() {
       if (this.getChapterCache(this.chapterIndex)) {
@@ -132,14 +164,6 @@ export default {
         });
       } else {
         this.fetchChapter(this.chapterIndex, this.chapterInfo)
-      }
-
-      if (!this.getChapterCache(this.chapterIndex-1) && this.lastChapterInfo) {
-        this.fetchChapterCache(this.chapterIndex-1, this.lastChapterInfo);
-      }
-
-      if (!this.getChapterCache(this.chapterIndex+1) && this.nextChapterInfo) {
-        this.fetchChapterCache(this.chapterIndex+1, this.nextChapterInfo);
       }
 
       let toDel = [];
@@ -169,15 +193,6 @@ export default {
           chapterScrollY: window.scrollY,
         });
         this.chapterCache[chapterIndex] = this.paragraphs;
-      }).catch(res => {
-        console.error(res);
-      });
-    },
-    fetchChapterCache(chapterIndex, chapterInfo) {
-      console.log('fetchChapterCache ', chapterInfo);
-      chapter(chapterInfo).then(res => {
-        console.log(res.data);
-        this.chapterCache[chapterIndex] = res.data.content.split('\n');
       }).catch(res => {
         console.error(res);
       });
@@ -226,7 +241,7 @@ export default {
     }
   },
   title() {
-    return this.chapterInfo.name + " - 易读";
+    return this.bookChapter.name + " - 易读";
   }
 }
 </script>

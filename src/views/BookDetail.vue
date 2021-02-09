@@ -2,13 +2,13 @@
   <div>
     <div class="bookDetailInfo">
       <div class="bookCover">
-        <img :alt="bookInfo.name+'封面'" :src="bookInfo.coverUrl">
+        <img :alt="name+'封面'" :src="bookData.coverUrl">
       </div>
       <div class="bookInfoBox">
         <dl>
-          <dt>{{bookInfo.name}}</dt>
+          <dt>{{name}}</dt>
           <dd>
-            <p>作者：{{bookInfo.author.name}}</p>
+            <p>作者：{{author}}</p>
             <p>最新章节：{{bookData.lastChapter}}</p>
               <p>书架：
                 <b-button size="sm" v-if="!inBookShelf" :disabled="disableAddToBookshelf" @click="addToBookshelf()">加入</b-button>
@@ -25,7 +25,7 @@
     <div class="catalog">
       <div class="title">目录</div>
       <p>排序：<b-button size="sm" @click="toggleOrder">{{textButtonToggleOrder}}</b-button></p>
-      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author.name, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
+      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:name, author:author, bookId: bookData.id, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
     </div>
   </div>
 </template>
@@ -50,14 +50,14 @@ export default {
         lastChapter: '',
         status: '',
         summary: '',
-        toc: [],
+        spine: [],
       },
       reverseOrder: false,
     }
   },
   computed: {
     bookCatalogWithIndex() {
-      let bookCatalog = this.bookData.toc;
+      let bookCatalog = this.bookData.spine;
       let bookCatalogWithIndex = [];
       for (let i = 0; i < bookCatalog.length; i++) {
         const chapterWithIndex = {

@@ -44,7 +44,7 @@ export function book(bookInfo) {
                 lastChapter
                 status
                 summary
-                toc {
+                spine {
                     name
                     url
                     chapter
