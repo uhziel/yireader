@@ -22,7 +22,7 @@ import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
   name: 'BookChapter',
-  props: ['name', 'author', 'bookId', 'chapterIndex'],
+  props: {name: String, author: String, bookId: String, chapterIndex: Number},
   components: {
     ChapterNav
   },
@@ -133,7 +133,7 @@ export default {
       const variables = {
           info: {
             bookId: this.bookId,
-            bookChapterIndex: parseInt(this.chapterIndex),
+            bookChapterIndex: this.chapterIndex,
           }
       };
       graphql(query, variables).then(res => {

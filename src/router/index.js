@@ -40,7 +40,15 @@ Vue.use(VueRouter)
     path: '/bookchapter/:name-:author-:bookId/:chapterIndex',
     name: 'BookChapter',
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
-    props: true
+    props: route => {
+      const v = {
+        name: route.params.name,
+        author: route.params.author,
+        bookId: route.params.bookId,
+        chapterIndex: parseInt(route.params.chapterIndex),
+      };
+      return v;
+    },
   },
   {
     path: '/login',
