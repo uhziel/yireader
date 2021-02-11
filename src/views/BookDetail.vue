@@ -118,6 +118,7 @@ export default {
       addBookToBookShelf(this.bookData.id).then(res => {
         if (!res.data.errors) {
           this.fetchBook();
+          this.$store.commit('addToBookshelf', this.bookFullName);
         } else {
           //TODO
         }

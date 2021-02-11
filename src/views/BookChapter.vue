@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import {chapter, graphql} from "../api.js";
+import {graphql} from "../api.js";
 import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
@@ -97,11 +97,6 @@ export default {
       chapterIndex: this.chapterIndex,
       chapterScrollY: window.scrollY,
     });
-    this.$store.dispatch({
-        type: 'setBookChapters',
-        bookFullName: this.bookFullName,
-        bookChapters: this.chapterCache,
-    });
     next();
   },
   watch: {
@@ -141,61 +136,23 @@ export default {
           this.bookChapter = res.data.data.bookChapter;
           this.paragraphs = res.data.data.bookChapter.data.split('\n');
           this.loading = false;
+
+          this.$nextTick(function () {
+            this.$root.$emit('scroll-to', this.lastChapterScrollY);
+            this.lastChapterScrollY = 0.0;
+          });
+          this.loading = false;
+          this.$store.commit({
+            type: 'setReading',
+            bookFullName: this.bookFullName,
+            chapterIndex: this.chapterIndex,
+            chapterScrollY: window.scrollY,
+          });
         } else {
           //TODO 错误提示
           console.error(res.data.errors);
         }
       }).catch(e => console.error(e));
-    },
-    loadChapter() {
-      if (this.getChapterCache(this.chapterIndex)) {
-        console.log("命中缓存:", this.chapterInfo.name);
-        this.paragraphs = this.getChapterCache(this.chapterIndex);
-        this.$nextTick(function () {
-          this.$root.$emit('scroll-to', this.lastChapterScrollY);
-          this.lastChapterScrollY = 0.0;
-        });
-        this.loading = false;
-        this.$store.commit({
-          type: 'setReading',
-          bookFullName: this.bookFullName,
-          chapterIndex: this.chapterIndex,
-          chapterScrollY: window.scrollY,
-        });
-      } else {
-        this.fetchChapter(this.chapterIndex, this.chapterInfo)
-      }
-
-      let toDel = [];
-      for (const chapterIndex in this.chapterCache) {
-        if (Math.abs(chapterIndex - this.chapterIndex) > 1) {
-          toDel.push(chapterIndex);
-        }
-      }
-      for (const chapterIndex of toDel) {
-        delete this.chapterCache[chapterIndex];
-      }
-    },
-    fetchChapter(chapterIndex, chapterInfo) {
-      this.loading = true;
-      chapter(chapterInfo).then(res => {
-        console.log(res.data);
-        this.loading = false;
-        this.paragraphs = res.data.content.split('\n');
-        this.$nextTick(function () {
-          this.$root.$emit('scroll-to', this.lastChapterScrollY);
-          this.lastChapterScrollY = 0.0;
-        });
-        this.$store.commit({
-          type: 'setReading',
-          bookFullName: this.bookFullName,
-          chapterIndex: chapterIndex,
-          chapterScrollY: window.scrollY,
-        });
-        this.chapterCache[chapterIndex] = this.paragraphs;
-      }).catch(res => {
-        console.error(res);
-      });
     },
     tryFetchBook() {
       const book = this.$store.getters.getBookByFullName(this.bookFullName);

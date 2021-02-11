@@ -350,15 +350,6 @@ export default new Vuex.Store({
         }
       }
     },
-    setBookChapters ({commit, getters}, payload) {
-      console.log("setBookChapters bookFullName:", payload.bookFullName);
-      const book = getters.getBookByFullName(payload.bookFullName);
-      if (!book) {
-        return;
-      }
-      book.bookChapters = payload.bookChapters;
-      commit('updateBook', book);
-    },
   },
   modules: {
     bookSources,

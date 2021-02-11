@@ -68,6 +68,7 @@ export default {
         params: {
           name: this.info.name,
           author: this.info.author.name,
+          bookId: this.info.id,
           chapterIndex: chapterIndex,
         }
       };
@@ -82,6 +83,7 @@ export default {
   methods: {
     removeFromBookshelf() {
       this.$store.dispatch('deleteBook', this.info.id);
+      this.$store.commit('removeFromBookshelf', this.bookFullName);
     },
     moveUp() {
       this.$store.dispatch('moveUpBook', this.info.id);
