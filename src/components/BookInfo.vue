@@ -17,7 +17,7 @@
         <b-button class="mx-1" variant="secondary" v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</b-button>
       </b-button-group>
       <div>
-        <span v-if="reading">已读到：<router-link :to="detailRoute">{{reading.chapterName}}</router-link></span>
+        <span v-if="info.readingChapter">已读到：<router-link :to="readingRoute">{{info.readingChapter.name}}</router-link></span>
       </div>
     </dl>
   </div>
@@ -26,7 +26,7 @@
 <script>
 export default {
   name: 'BookInfo',
-  props: ['info', 'reading', 'inBookshelf', 'index'],
+  props: ['info', 'inBookshelf', 'index'],
   computed: {
     bookFullName() {
       return this.info.name + '-' + this.info.author.name;
@@ -73,10 +73,27 @@ export default {
         }
       };
     },
+    readingRoute() {
+      if (!this.inBookshelf) {
+        return {
+          name:"BookDetail",
+          params:{name: this.info.name, author: this.info.author.name},
+          query: this.info
+        };
+      }
+      return {
+        name: 'BookChapter',
+        params: {
+          name: this.info.name,
+          author: this.info.author.name,
+          bookId: this.info.id,
+          chapterIndex: this.info.readingChapter.index,
+        }
+      };
+    },
   },
   created() {
     console.log('BookInfo info', this.info);
-    console.log('BookInfo reading', this.reading);
     console.log('BookInfo inBookshelf', this.inBookshelf);
     console.log('BookInfo index', this.index);
   },

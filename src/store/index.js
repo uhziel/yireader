@@ -6,15 +6,6 @@ import books from './modules/books';
 
 Vue.use(Vuex)
 
-function isInBookshelf(bookshelf, bookFullName) {
-  for (const bookUserData of bookshelf) {
-    if (bookUserData.fullName === bookFullName) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function upgradeUserData(oldUserData, newUserData) {
   if (oldUserData.version === 1 && newUserData.version === 2) {
     for (const bookUserData of oldUserData.bookshelf) {
@@ -27,7 +18,6 @@ function upgradeUserData(oldUserData, newUserData) {
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
-    books: {}, //<name-author, { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {} }>
     userData: { 
       bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0, contentChanged: false, reverseOrder: false}
       theme: {
@@ -52,11 +42,6 @@ export default new Vuex.Store({
     bookshelfLength(state) {
       return state.userData.bookshelf.length;
     },
-    getBookByFullName(state) {
-      return function (fullName) {
-        return state.books[fullName];
-      };
-    },
     getBookUserData(state) {
       return function (fullName) {
         for (const bookUserData of state.userData.bookshelf) {
@@ -66,53 +51,6 @@ export default new Vuex.Store({
         }
         return null;
       };
-    },
-    isInBookshelf(state, getters) {
-      return function (fullName) {
-        return !!getters.getBookUserData(fullName);
-      };
-    },
-    isReverseOrder (stete, getters) {
-      return function (fullName) {
-        const bookUserData = getters.getBookUserData(fullName);
-        if (!bookUserData) {
-          return false;
-        }
-        return bookUserData.reverseOrder;
-      };
-    },
-    bookInfosInBookshelf(state, getters) {
-      let bookInfos = [];
-      for (const bookUserData of state.userData.bookshelf) {
-        let book = getters.getBookByFullName(bookUserData.fullName);
-        if (book) {
-          bookInfos.push(book.bookInfo);
-        }
-      }
-      console.log("bookInfosInBookshelf ", bookInfos);
-      return bookInfos;
-    },
-    getReadingProcess(state, getters) {
-      return function (fullName) {
-        const bookUserData = getters.getBookUserData(fullName);
-        if (!bookUserData) {
-          return null;
-        }
-        const chapterIndex = bookUserData.chapterIndex;
-        if (chapterIndex < 0) {
-          return null;
-        }
-        const book = getters.getBookByFullName(fullName);
-        if (!book.bookCatalog[chapterIndex]) {
-          return null;
-        }
-        return {
-          chapterIndex,
-          chapterScrollY: bookUserData.chapterScrollY,
-          chapterName: book.bookCatalog[chapterIndex].name
-        };
-      };
-
     },
   },
   mutations: {
@@ -130,26 +68,6 @@ export default new Vuex.Store({
       }
       setAuthorizationHeader(state.userData.token);
       console.log("initStore userData: ", state.userData );
-      for (let i = 0; i < localStorage.length; i++) {
-        let bookFullName = localStorage.key(i);
-        if (bookFullName.indexOf("-") === -1 || bookFullName === "loglevel:webpack-dev-server") {
-          continue;
-        }
-        let bookStr = localStorage.getItem(bookFullName);
-        if (bookStr) {
-          try {
-            if (!isInBookshelf(state.userData.bookshelf, bookFullName)) {
-              localStorage.removeItem(bookFullName);
-              continue;
-            }
-            let book = JSON.parse(bookStr);
-            Vue.set(state.books, bookFullName, book);
-          } catch (e) {
-            console.error(e);
-            localStorage.removeItem(bookFullName);
-          }
-        }
-      }
     },
     authRequest(state) {
       state.authStatus = 'loading'
@@ -170,18 +88,6 @@ export default new Vuex.Store({
       state.userData.username = '';
       localStorage.setItem('userData', JSON.stringify(state.userData));
       setAuthorizationHeader('');
-    },
-    updateBook (state, book) {
-      console.log("updateBook ", book);
-      if (book.bookInfo.summary.length === 0 && book.bookDetail.summary.length > 0) {
-        book.bookInfo.summary = book.bookDetail.summary;
-      }
-      if (book.bookInfo.cover.length === 0 && book.bookDetail.cover.length > 0) {
-        book.bookInfo.cover = book.bookDetail.cover;
-      }
-      let fullName = book.bookInfo.name + "-" + book.bookInfo.author;
-      Vue.set(state.books, fullName, book);
-      localStorage.setItem(fullName, JSON.stringify(book));
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
@@ -301,54 +207,6 @@ export default new Vuex.Store({
     },
     async changePassword(_, user) {
       return (await api.changePassword(user)).data;
-    },
-    async fetchBook ({commit, getters}, bookInfo) {
-      console.log('fetchBook ', bookInfo);
-      try {
-        let bookDetail = (await api.detail(bookInfo)).data;
-        let bookCatalog = (await api.catalog(bookDetail)).data;
-        bookCatalog = bookCatalog.filter(entry => entry.url.length > 0);
-        let bookChapters = {};
-        let book = {
-          bookDetail, bookCatalog, bookInfo, bookChapters
-        };
-        let fullName = book.bookInfo.name + "-" + book.bookInfo.author;
-        let oldBook = getters.getBookByFullName(fullName);
-        if (oldBook) {
-          book.bookChapters = oldBook.bookChapters;
-        }
-        commit('updateBook', book);
-        commit({
-          type: 'setLastFetchTime',
-          bookFullName: fullName,
-          lastFetchTime: Date.now(),
-        });
-        if (oldBook) {
-          if (oldBook.bookCatalog.length !== book.bookCatalog.length) {
-            commit({
-              type: 'setContentChanged',
-              bookFullName: fullName,
-              contentChanged: true,
-            });
-          }
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    async fetchAllBook({state, getters, dispatch}) {
-      console.log('fetchAllBook');
-      const now = Date.now();
-      for (const bookUserData of state.userData.bookshelf) {
-        const timeDiff = now - bookUserData.lastFetchTime;
-        console.log('fetchAllBook timeDiff:', timeDiff);
-        if (timeDiff > 600000) {
-          const book = getters.getBookByFullName(bookUserData.fullName);
-          if (book) {
-            await dispatch('fetchBook', book.bookInfo);
-          }
-        }
-      }
     },
   },
   modules: {

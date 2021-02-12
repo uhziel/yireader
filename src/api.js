@@ -44,6 +44,10 @@ export function book(bookInfo) {
                 lastChapter
                 status
                 summary
+                readingChapter {
+                    index
+                    name
+                }
                 spine {
                     name
                     url

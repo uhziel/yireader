@@ -4,7 +4,7 @@
     <b-container v-else>
       <b-row cols="1">
         <b-col v-for="(bookInfo, index) in bookInfos" :key="index">
-          <BookInfo :index="index" :info="bookInfo" :reading="getReading(bookInfo)" :inBookshelf="true" />
+          <BookInfo :index="index" :info="bookInfo" :inBookshelf="true" />
         </b-col>
       </b-row>  
     </b-container>
@@ -30,10 +30,6 @@ export default {
     },
   },
   methods: {
-    getReading(bookInfo) {
-      const fullName = bookInfo.name + '-' + bookInfo.author;
-      return this.$store.getters.getReadingProcess(fullName);
-    }
   },
   components: {
     BookInfo

@@ -31,6 +31,10 @@ const actions = {
           coverUrl
           summary
           bookSource
+          readingChapter {
+            index
+            name
+          }
         }
       }`;
     graphql(query).then(res => {
