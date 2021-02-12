@@ -44,6 +44,7 @@ export function book(bookInfo) {
                 lastChapter
                 status
                 summary
+                reverseOrder
                 readingChapter {
                     index
                     name
@@ -57,6 +58,18 @@ export function book(bookInfo) {
         }`;
     const variables = {
         info: bookInfo
+    };
+    return graphql(query, variables);
+}
+
+export function reverseOrderBook(bookId, reverse) {
+    const query = `
+        mutation ReverseOrderBook($id: ID!, $reverse: Boolean!) {
+            reverseOrderBook(id: $id, reverse: $reverse)
+        }`;
+    const variables = {
+        id: bookId,
+        reverse: reverse,
     };
     return graphql(query, variables);
 }

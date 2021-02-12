@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import {book, addBookToBookShelf} from '../api'
+import {book, addBookToBookShelf, reverseOrderBook} from '../api'
 
 export default {
   name: "BookDetail",
@@ -49,10 +49,10 @@ export default {
         coverUrl: '',
         lastChapter: '',
         status: '',
+        reverseOrder: false,
         summary: '',
         spine: [],
       },
-      reverseOrder: false,
     }
   },
   computed: {
@@ -66,7 +66,7 @@ export default {
         }
         bookCatalogWithIndex.push(chapterWithIndex);
       }
-      if (this.reverseOrder) {
+      if (this.bookData.reverseOrder) {
         bookCatalogWithIndex = Array.from(bookCatalogWithIndex).reverse();
       }
       return bookCatalogWithIndex;
@@ -81,7 +81,7 @@ export default {
       return (this.bookData.name.length === 0);
     },
     textButtonToggleOrder() {
-      if (this.reverseOrder) {
+      if (this.bookData.reverseOrder) {
         return '正序';
       } else {
         return '倒序';
@@ -132,7 +132,13 @@ export default {
       });
     },
     toggleOrder() {
-      this.reverseOrder = !this.reverseOrder;
+      reverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {
+        if (!res.data.errors) {
+          this.fetchBook();
+        } else {
+          //TODO
+        }
+      }).catch(e => console.log(e));
     }
   },
   title() {
