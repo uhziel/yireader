@@ -41,11 +41,7 @@ export default {
       return this.$store.getters.getBookUserData(this.bookFullName);
     },
     contentChanged() {
-      const bookUserData = this.bookUserData;
-      if (!bookUserData) {
-        return false;
-      }
-      return this.inBookshelf && bookUserData.contentChanged;
+      return this.inBookshelf && this.info.contentChanged;
     },
     detailRoute() {
       if (!this.inBookshelf) {

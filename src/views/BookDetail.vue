@@ -91,7 +91,6 @@ export default {
   created() {
     this.bookInfo = this.$route.query;
     this.fetchBook();
-    this.setContentChangedToFalse();
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("bookInfo: ", this.bookInfo)
@@ -100,7 +99,6 @@ export default {
     $route() {
       this.bookInfo = this.$route.query;
       this.fetchBook();
-      this.setContentChangedToFalse();
     }
   },
   methods: {
@@ -123,13 +121,6 @@ export default {
           //TODO
         }
       }).catch(e => console.error(e));
-    },
-    setContentChangedToFalse() {
-      this.$store.commit({
-        type: 'setContentChanged',
-        bookFullName: this.bookFullName,
-        contentChanged: false,
-      });
     },
     toggleOrder() {
       reverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {

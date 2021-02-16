@@ -19,7 +19,7 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     userData: { 
-      bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0, lastFetchTime: 0, contentChanged: false, reverseOrder: false}
+      bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0}
       theme: {
         'font-size': 1.235
       },
@@ -91,8 +91,7 @@ export default new Vuex.Store({
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
-        {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0,
-          lastFetchTime: 0, contentChanged: false, reverseOrder: false});
+        {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0});
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     removeFromBookshelf (state, indexInBookshelf) {
@@ -125,36 +124,6 @@ export default new Vuex.Store({
         if (bookUserData.fullName === payload.bookFullName) {
           bookUserData.chapterIndex = payload.chapterIndex;
           bookUserData.chapterScrollY = payload.chapterScrollY;
-          localStorage.setItem('userData', JSON.stringify(state.userData));
-          break;
-        }
-      }
-    },
-    setLastFetchTime (state, payload) {
-      console.log('setLastFetchTime bookFullName:', payload.bookFullName, " lastFetchTime:", payload.lastFetchTime);
-      for (const bookUserData of state.userData.bookshelf) {
-        if (bookUserData.fullName === payload.bookFullName) {
-          bookUserData.lastFetchTime = payload.lastFetchTime;
-          localStorage.setItem('userData', JSON.stringify(state.userData));
-          break;
-        }
-      }
-    },
-    setContentChanged (state, payload) {
-      console.log('setContentChanged bookFullName:', payload.bookFullName,
-        " contentChanged:", payload.contentChanged);
-      for (const bookUserData of state.userData.bookshelf) {
-        if (bookUserData.fullName === payload.bookFullName) {
-          bookUserData.contentChanged = payload.contentChanged;
-          localStorage.setItem('userData', JSON.stringify(state.userData));
-          break;
-        }
-      }     
-    },
-    setReverseOrder (state, payload) {
-      for (const bookUserData of state.userData.bookshelf) {
-        if (bookUserData.fullName === payload.bookFullName) {
-          bookUserData.reverseOrder = payload.reverseOrder;
           localStorage.setItem('userData', JSON.stringify(state.userData));
           break;
         }

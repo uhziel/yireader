@@ -71,8 +71,7 @@ export default {
     if (userData && userData.chapterScrollY) {
       console.log("set lastChapterScrollY:", userData.chapterScrollY);
       this.lastChapterScrollY = userData.chapterScrollY;
-    }
-    this.setContentChangedToFalse();    
+    }   
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("chapterIndex: ", this.chapterIndex);
@@ -101,7 +100,6 @@ export default {
   watch: {
     $route() {
       this.tryFetchBookChapter();
-      this.setContentChangedToFalse();
       document.title = this.bookChapter.name + ' - 易读';
     }
   },
@@ -151,13 +149,6 @@ export default {
           console.error(res.data.errors);
         }
       }).catch(e => console.error(e));
-    },
-    setContentChangedToFalse() {
-      this.$store.commit({
-        type: 'setContentChanged',
-        bookFullName: this.bookFullName,
-        contentChanged: false,
-      });
     },
     changeFontSize(delta) {
       this.$store.commit({

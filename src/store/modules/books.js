@@ -30,6 +30,7 @@ const actions = {
           }
           coverUrl
           summary
+          contentChanged
           bookSource
           readingChapter {
             index
