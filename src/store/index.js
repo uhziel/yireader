@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import api, {setAuthorizationHeader} from "@/api.js";
 import bookSources from './modules/bookSources';
 import books from './modules/books';
+import auth from './modules/auth';
 
 Vue.use(Vuex)
 
@@ -23,25 +23,10 @@ export default new Vuex.Store({
       theme: {
         'font-size': 1.235
       },
-      username: '',
-      token: '',
       version: 2
     },
-    authStatus: '',
   },
   getters: {
-    isLoggedIn(state) {
-      return state.userData.token.length > 0;
-    },
-    username(state) {
-      return state.userData.username;
-    },
-    authStatus(state) {
-      return state.authStatus;
-    },
-    bookshelfLength(state) {
-      return state.userData.bookshelf.length;
-    },
     getBookUserData(state) {
       return function (fullName) {
         for (const bookUserData of state.userData.bookshelf) {
@@ -66,28 +51,7 @@ export default new Vuex.Store({
           localStorage.removeItem("userData");
         }
       }
-      setAuthorizationHeader(state.userData.token);
-      console.log("initStore userData: ", state.userData );
-    },
-    authRequest(state) {
-      state.authStatus = 'loading'
-    },
-    authSuccess(state, payload) {
-      state.authStatus = 'success'
-      state.userData.token = payload.token;
-      state.userData.username = payload.username;
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-      setAuthorizationHeader(payload.token);
-    },
-    authFail(state) {
-      state.authStatus = 'fail';
-    },
-    logout(state) {
-      state.authStatus = '';
-      state.userData.token = '';
-      state.userData.username = '';
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-      setAuthorizationHeader('');
+      console.log("initStore userData: ", state.userData);
     },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
@@ -138,48 +102,10 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async login({commit}, user) {
-      commit('authRequest');
-      try {
-        let result = (await api.login(user)).data;
-        if (result.ret === 0) {
-          commit('authSuccess', {
-            token: result.token,
-            username: result.username
-          });
-        } else {
-          commit('authFail');
-        }
-        return result;
-      } catch (e) {
-        commit('authFail');
-        throw e;
-      }
-    },
-    async register({commit}, user) {
-      commit('authRequest');
-      try {
-        let result = (await api.register(user)).data;
-        if (result.ret === 0) {
-          commit('authSuccess', {
-            token: result.token,
-            username: result.username
-          });
-        } else {
-          commit('authFail');
-        }
-        return result;
-      } catch (e) {
-        commit('authFail');
-        throw e;
-      }
-    },
-    async changePassword(_, user) {
-      return (await api.changePassword(user)).data;
-    },
   },
   modules: {
     bookSources,
     books,
+    auth,
   }
 })
