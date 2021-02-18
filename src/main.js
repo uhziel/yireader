@@ -14,6 +14,5 @@ Vue.mixin(titleMixin);
 new Vue({
   router,
   store,
-  beforeCreate() { this.$store.commit("initStore")},
   render: h => h(App)
 }).$mount('#app')

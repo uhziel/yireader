@@ -15,17 +15,35 @@ function upgradeUserData(oldUserData, newUserData) {
   oldUserData.version = newUserData.version;
 }
 
-export default new Vuex.Store({
-  strict: process.env.NODE_ENV !== 'production',
-  state: {
+const state = () => {
+  const initState = {
     userData: { 
       bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0}
       theme: {
         'font-size': 1.235
       },
       version: 2
-    },
-  },
+    }, 
+  };
+
+  let userDataStr = localStorage.getItem("userData");
+  if (userDataStr) {
+    try {
+      const oldUserData = JSON.parse(userDataStr);
+      upgradeUserData(oldUserData, initState.userData);
+      initState.userData = oldUserData;
+    } catch (e) {
+      console.error(e);
+      localStorage.removeItem("userData");
+    }
+  }
+  console.log("initStore userData: ", initState.userData);
+  return initState;
+}
+
+export default new Vuex.Store({
+  strict: process.env.NODE_ENV !== 'production',
+  state: state,
   getters: {
     getBookUserData(state) {
       return function (fullName) {
@@ -39,20 +57,6 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    initStore (state) {
-      let userDataStr = localStorage.getItem("userData");
-      if (userDataStr) {
-        try {
-          const oldUserData = JSON.parse(userDataStr);
-          upgradeUserData(oldUserData, state.userData);
-          state.userData = oldUserData;
-        } catch (e) {
-          console.error(e);
-          localStorage.removeItem("userData");
-        }
-      }
-      console.log("initStore userData: ", state.userData);
-    },
     addToBookshelf (state, bookFullName) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
         {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0});

@@ -1,13 +1,29 @@
 import {login as loginAPI, register as registerAPI,
   changePassword as changePasswordAPI, setAuthorizationHeader} from "../../api.js"
 
-const state = () => ({
-  authData: {
-    username: '',
-    token: '',
-  },
-  authStatus: '',
-});
+const state = () => {
+  const initState = {
+    authData: {
+      username: '',
+      token: '',
+    },
+    authStatus: '',
+  };
+
+  let authDataStr = localStorage.getItem('authData');
+  if (authDataStr) {
+    try {
+      const data = JSON.parse(authDataStr);
+      initState.authData = data;
+    } catch (e) {
+      console.error(e);
+      localStorage.removeItem('authData');
+    }
+  }
+  setAuthorizationHeader(initState.authData.token);
+  console.log("initStore authData: ", initState.authData);
+  return initState;
+};
 
 const getters = {
   isLoggedIn(state) {
@@ -22,20 +38,6 @@ const getters = {
 };
 
 const mutations = {
-  initStore (state) {
-    let authDataStr = localStorage.getItem('authData');
-    if (authDataStr) {
-      try {
-        const data = JSON.parse(authDataStr);
-        state.authData = data;
-      } catch (e) {
-        console.error(e);
-        localStorage.removeItem('authData');
-      }
-    }
-    setAuthorizationHeader(state.authData.token);
-    console.log("initStore authData: ", state.authData);
-  },
   authRequest(state) {
     state.authStatus = 'loading'
   },
