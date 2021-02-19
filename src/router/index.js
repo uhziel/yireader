@@ -9,7 +9,10 @@ Vue.use(VueRouter)
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/about',
@@ -37,10 +40,18 @@ Vue.use(VueRouter)
     props: true
   },
   {
-    path: '/bookchapter/:name-:author/:chapterIndex',
+    path: '/bookchapter/:name-:author-:bookId/:chapterIndex',
     name: 'BookChapter',
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
-    props: true
+    props: route => {
+      const v = {
+        name: route.params.name,
+        author: route.params.author,
+        bookId: route.params.bookId,
+        chapterIndex: parseInt(route.params.chapterIndex),
+      };
+      return v;
+    },
   },
   {
     path: '/login',

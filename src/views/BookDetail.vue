@@ -2,14 +2,14 @@
   <div>
     <div class="bookDetailInfo">
       <div class="bookCover">
-        <img :alt="bookInfo.name+'封面'" :src="bookInfo.cover">
+        <img :alt="name+'封面'" :src="bookData.coverUrl">
       </div>
       <div class="bookInfoBox">
         <dl>
-          <dt>{{bookInfo.name}}</dt>
+          <dt>{{name}}</dt>
           <dd>
-            <p>作者：{{bookInfo.author}}</p>
-            <p>最新章节：{{bookData.bookDetail.lastChapter}}</p>
+            <p>作者：{{author}}</p>
+            <p>最新章节：{{bookData.lastChapter}}</p>
               <p>书架：
                 <b-button size="sm" v-if="!inBookShelf" :disabled="disableAddToBookshelf" @click="addToBookshelf()">加入</b-button>
                 <span v-else>已加入</span>
@@ -20,33 +20,44 @@
     </div>
     <div class="summary">
       <div class="title">内容介绍</div>
-      <p>{{bookData.bookDetail.summary}}</p>   
+      <p>{{bookData.summary}}</p>   
     </div>
     <div class="catalog">
       <div class="title">目录</div>
       <p>排序：<b-button size="sm" @click="toggleOrder">{{textButtonToggleOrder}}</b-button></p>
-      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:bookInfo.name, author:bookInfo.author, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
+      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:name, author:author, bookId: bookData.id, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
     </div>
   </div>
 </template>
 
 <script>
+import {book, addBookToBookShelf, reverseOrderBook} from '../api'
 
 export default {
   name: "BookDetail",
   props: ["name", "author"],
   data() {
     return {
-      bookInfo: []
+      bookInfo: [],
+      bookData: {
+        id: '',
+        name: '',
+        inBookShelf: false,
+        author: {
+          name: '',
+        },
+        coverUrl: '',
+        lastChapter: '',
+        status: '',
+        reverseOrder: false,
+        summary: '',
+        spine: [],
+      },
     }
   },
   computed: {
-    bookData() {
-      return this.$store.getters.getBookByFullName(this.bookFullName) ||
-        { bookDetail: {lastChapter: ""}, bookCatalog: [], bookInfo: {}, bookChapters: {}, }; 
-    },
     bookCatalogWithIndex() {
-      let bookCatalog = this.bookData.bookCatalog;
+      let bookCatalog = this.bookData.spine;
       let bookCatalogWithIndex = [];
       for (let i = 0; i < bookCatalog.length; i++) {
         const chapterWithIndex = {
@@ -55,25 +66,22 @@ export default {
         }
         bookCatalogWithIndex.push(chapterWithIndex);
       }
-      if (this.reverseOrder) {
+      if (this.bookData.reverseOrder) {
         bookCatalogWithIndex = Array.from(bookCatalogWithIndex).reverse();
       }
       return bookCatalogWithIndex;
     },
     inBookShelf() {
-      return this.$store.getters.isInBookshelf(this.bookFullName);
+      return !!(this.bookData.inBookshelf)
     },
     bookFullName() {
       return this.name + "-" + this.author;
     },
     disableAddToBookshelf() {
-      return !(this.$store.getters.getBookByFullName(this.bookFullName));
-    },
-    reverseOrder() {
-      return this.$store.getters.isReverseOrder(this.bookFullName);
+      return (this.bookData.name.length === 0);
     },
     textButtonToggleOrder() {
-      if (this.reverseOrder) {
+      if (this.bookData.reverseOrder) {
         return '正序';
       } else {
         return '倒序';
@@ -82,11 +90,7 @@ export default {
   },
   created() {
     this.bookInfo = this.$route.query;
-    if (!this.$store.getters.getBookByFullName(this.bookFullName)) {
-      console.log("fetchBook:", this.bookInfo);
-      this.$store.dispatch("fetchBook", this.bookInfo);
-    }
-    this.setContentChangedToFalse();
+    this.fetchBook();
     console.log("name: ", this.name);
     console.log("author: ", this.author);
     console.log("bookInfo: ", this.bookInfo)
@@ -94,30 +98,42 @@ export default {
   watch: {
     $route() {
       this.bookInfo = this.$route.query;
-      if (!this.$store.getters.getBookByFullName(this.bookFullName)) {
-        console.log("fetchBook:", this.bookInfo);
-        this.$store.dispatch("fetchBook", this.bookInfo);
-      }
-      this.setContentChangedToFalse();
+      this.fetchBook();
     }
   },
   methods: {
-    addToBookshelf() {
-      this.$store.commit('addToBookshelf', this.bookFullName);
+    fetchBook() {
+      book(this.bookInfo).then(res => {
+        if (!res.data.errors) {
+          this.bookData = res.data.data.book;
+          this.bookInfo.bookId = this.bookData.id;
+        } else {
+          //TODO
+        }
+      }).catch(e => console.error(e));
     },
-    setContentChangedToFalse() {
-      this.$store.commit({
-        type: 'setContentChanged',
-        bookFullName: this.bookFullName,
-        contentChanged: false,
-      });
+    addToBookshelf() {
+      addBookToBookShelf(this.bookData.id).then(res => {
+        if (!res.data.errors) {
+          this.fetchBook();
+          this.$store.commit({
+            type: 'addToBookshelf',
+            bookId: this.bookData.id,
+            bookFullName: this.bookFullName
+          });
+        } else {
+          //TODO
+        }
+      }).catch(e => console.error(e));
     },
     toggleOrder() {
-      this.$store.commit({
-        type: 'setReverseOrder',
-        bookFullName: this.bookFullName,
-        reverseOrder: !this.reverseOrder,
-      });
+      reverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {
+        if (!res.data.errors) {
+          this.fetchBook();
+        } else {
+          //TODO
+        }
+      }).catch(e => console.log(e));
     }
   },
   title() {

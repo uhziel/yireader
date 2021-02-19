@@ -12,7 +12,98 @@ export function setAuthorizationHeader(value) {
 }
 
 export function search(key) {
-    return axios.post(`${origin}/search?key=${key}`);
+    const query = `
+        query Search($name: String!) {
+            search(name: $name) {
+                name
+                author {
+                    name
+                }
+                summary
+                coverUrl
+                url
+                bookSourceId
+            }
+        }`;
+    const variables = {
+        name: key
+    };
+    return graphql(query, variables);
+}
+
+export function book(bookInfo) {
+    const query = `
+        query Book($info: BookInfo!) {
+            book(info: $info) {
+                id name
+                inBookshelf
+                author {
+                    name
+                }
+                coverUrl
+                lastChapter
+                status
+                summary
+                reverseOrder
+                readingChapter {
+                    index
+                    name
+                }
+                spine {
+                    name
+                    url
+                    chapter
+                }
+            }
+        }`;
+    const variables = {
+        info: bookInfo
+    };
+    return graphql(query, variables);
+}
+
+export function reverseOrderBook(bookId, reverse) {
+    const query = `
+        mutation ReverseOrderBook($id: ID!, $reverse: Boolean!) {
+            reverseOrderBook(id: $id, reverse: $reverse)
+        }`;
+    const variables = {
+        id: bookId,
+        reverse: reverse,
+    };
+    return graphql(query, variables);
+}
+
+export function addBookToBookShelf(bookId) {
+    const query = `
+        mutation AddBookToBookShelf($id: ID!) {
+            addBookToBookShelf(id: $id)
+        }`;
+    const variables = {
+        id: bookId,
+    };
+    return graphql(query, variables);
+}
+
+export function createBook(bookInfo) {
+    const query = `
+        mutation CreateBook($info: BookInfo!) {
+            createBook(info: $info) {
+                id
+                name
+                author {
+                    name
+                }
+                coverUrl
+                summary
+                url
+                bookSource
+            }
+        }`;
+    const variables = {
+        info: bookInfo,
+    };
+    return graphql(query, variables);
 }
 
 export function detail(bookInfo) {
@@ -27,10 +118,6 @@ export function chapter(chapterInfo) {
     return axios.post(`${origin}/chapter`, chapterInfo);
 }
 
-export function booksources() {
-    return axios.get(`${origin}/booksources`);
-}
-
 export function login(user) {
     return axios.post(`${origin}/users/login`, user);
 }
@@ -43,13 +130,26 @@ export function changePassword(user) {
     return axios.post(`${origin}/users/changepassword`, user);
 }
 
+export function graphql(query, variables) {
+    const payload = {
+        query,
+        variables
+    };
+
+    return axios.post(`${origin}/graphql`, JSON.stringify(payload), {
+        headers: {'Content-Type': 'application/json'}
+    });
+}
+
 export default {
     search,
+    book,
+    createBook,
     detail,
     catalog,
     chapter,
-    booksources,
     login,
     register,
     changePassword,
+    graphql,
 };

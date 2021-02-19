@@ -41,7 +41,7 @@ export default {
     logout() {
       this.$store.commit('logout');
       if (this.$router.currentRoute.matched.some(record => record.meta.requiresAuth)) {
-        this.$router.push({name: 'Home'});
+        this.$router.push({name: 'Login'});
       }
     }
   }

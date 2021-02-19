@@ -2,13 +2,13 @@
   <div class="bookInfo">
     <div class="bookCover">
       <router-link :to="detailRoute">
-        <img :alt="info.name+'封面'" :src="info.cover">
+        <img :alt="info.name+'封面'" :src="info.coverUrl">
       </router-link>
     </div>
     <dl>
       <dt>
         <router-link class="name" :to="detailRoute">{{info.name}}<span class="redpoint" v-if="contentChanged" /></router-link>
-        <span class="author">{{info.author}}</span>
+        <span class="author">{{info.author.name}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
       <b-button-group class="operate my-3" size="sm">
@@ -17,7 +17,7 @@
         <b-button class="mx-1" variant="secondary" v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</b-button>
       </b-button-group>
       <div>
-        <span v-if="reading">已读到：<router-link :to="detailRoute">{{reading.chapterName}}</router-link></span>
+        <span v-if="info.readingChapter">已读到：<router-link :to="readingRoute">{{info.readingChapter.name}}</router-link></span>
       </div>
     </dl>
   </div>
@@ -26,32 +26,28 @@
 <script>
 export default {
   name: 'BookInfo',
-  props: ['info', 'reading', 'inBookshelf', 'index'],
+  props: ['info', 'inBookshelf', 'index'],
   computed: {
     bookFullName() {
-      return this.info.name + '-' + this.info.author;
+      return this.info.name + '-' + this.info.author.name;
     },
     moveUpEnable() {
       return this.inBookshelf && this.index > 0;
     },
     moveDownEnable() {
-      return this.inBookshelf && this.index < this.$store.getters.bookshelfLength - 1;
+      return this.inBookshelf && this.index < this.$store.state.books.all.length - 1;
     },
     bookUserData() {
       return this.$store.getters.getBookUserData(this.bookFullName);
     },
     contentChanged() {
-      const bookUserData = this.bookUserData;
-      if (!bookUserData) {
-        return false;
-      }
-      return this.inBookshelf && bookUserData.contentChanged;
+      return this.inBookshelf && this.info.contentChanged;
     },
     detailRoute() {
       if (!this.inBookshelf) {
         return {
           name:"BookDetail",
-          params:{name: this.info.name, author:this.info.author},
+          params:{name: this.info.name, author: this.info.author.name},
           query: this.info
         };
       }
@@ -64,30 +60,49 @@ export default {
         chapterIndex = 0;
       }
       return {
-        name: "BookChapter",
+        name: 'BookChapter',
         params: {
           name: this.info.name,
-          author: this.info.author,
+          author: this.info.author.name,
+          bookId: this.info.id,
           chapterIndex: chapterIndex,
+        }
+      };
+    },
+    readingRoute() {
+      if (!this.inBookshelf) {
+        return {
+          name:"BookDetail",
+          params:{name: this.info.name, author: this.info.author.name},
+          query: this.info
+        };
+      }
+      return {
+        name: 'BookChapter',
+        params: {
+          name: this.info.name,
+          author: this.info.author.name,
+          bookId: this.info.id,
+          chapterIndex: this.info.readingChapter.index,
         }
       };
     },
   },
   created() {
     console.log('BookInfo info', this.info);
-    console.log('BookInfo reading', this.reading);
     console.log('BookInfo inBookshelf', this.inBookshelf);
     console.log('BookInfo index', this.index);
   },
   methods: {
     removeFromBookshelf() {
-      this.$store.commit('removeFromBookshelf', this.index);
+      this.$store.dispatch('deleteBook', this.info.id);
+      this.$store.commit('removeFromBookshelf', this.bookFullName);
     },
     moveUp() {
-      this.$store.commit('moveUpInBookshelf', this.index);
+      this.$store.dispatch('moveUpBook', this.info.id);
     },
     moveDown() {
-      this.$store.commit('moveDownInBookshelf', this.index);
+      this.$store.dispatch('moveDownBook', this.info.id);
     },
   },
 }
