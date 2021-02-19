@@ -57,7 +57,7 @@ export default {
       return this.name + '-' + this.author;
     },
     bookUserData() {
-      return this.$store.getters.getBookUserData(this.bookFullName);
+      return this.$store.getters.getBookUserData(this.bookId);
     },
     contentStyle() {
       return {
@@ -68,7 +68,7 @@ export default {
   created() {
     this.tryFetchBookChapter();
     const userData = this.bookUserData;
-    if (userData && userData.chapterScrollY) {
+    if (userData && userData.chapterScrollY && this.chapterIndex == userData.chapterIndex) {
       console.log("set lastChapterScrollY:", userData.chapterScrollY);
       this.lastChapterScrollY = userData.chapterScrollY;
     }   
@@ -91,6 +91,7 @@ export default {
     }
     this.$store.commit({
       type: 'setReading',
+      bookId: this.bookId,
       bookFullName: this.bookFullName,
       chapterIndex: this.chapterIndex,
       chapterScrollY: window.scrollY,
@@ -140,6 +141,7 @@ export default {
           this.loading = false;
           this.$store.commit({
             type: 'setReading',
+            bookId: this.bookId,
             bookFullName: this.bookFullName,
             chapterIndex: this.chapterIndex,
             chapterScrollY: window.scrollY,
@@ -167,6 +169,7 @@ export default {
       console.log("recordReadingPos");
       this.$store.commit({
         type: 'setReading',
+        bookId: this.bookId,
         bookFullName: this.bookFullName,
         chapterIndex: this.chapterIndex,
         chapterScrollY: window.scrollY,

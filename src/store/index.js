@@ -18,7 +18,7 @@ function upgradeUserData(oldUserData, newUserData) {
 const state = () => {
   const initState = {
     userData: { 
-      bookshelf: [], //{fullName: "", chapterIndex: -1, chapterScrollY: 0.0}
+      bookshelf: [], //{bookId: "", bookFullName: "", chapterIndex: -1, chapterScrollY: 0.0}
       theme: {
         'font-size': 1.235
       },
@@ -46,9 +46,9 @@ export default new Vuex.Store({
   state: state,
   getters: {
     getBookUserData(state) {
-      return function (fullName) {
+      return function (bookId) {
         for (const bookUserData of state.userData.bookshelf) {
-          if (bookUserData.fullName === fullName) {
+          if (bookUserData.bookId === bookId) {
             return bookUserData;
           }
         }
@@ -57,9 +57,9 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    addToBookshelf (state, bookFullName) {
+    addToBookshelf (state, payload) {
       Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
-        {fullName: bookFullName, chapterIndex: -1, chapterScrollY: 0.0});
+        {bookId: payload.bookId, bookFullName: payload.bookFullName, chapterIndex: -1, chapterScrollY: 0.0});
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     removeFromBookshelf (state, indexInBookshelf) {
@@ -85,11 +85,12 @@ export default new Vuex.Store({
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     setReading (state, payload) {
-      console.log('setReading bookFullName:', payload.bookFullName,
+      console.log('setReading bookId:', payload.bookId, 'bookFullName:', payload.bookFullName,
         " index:", payload.chapterIndex,
         " scrollY:", payload.chapterScrollY);
       for (const bookUserData of state.userData.bookshelf) {
-        if (bookUserData.fullName === payload.bookFullName) {
+        if (bookUserData.bookId === payload.bookId) {
+          bookUserData.bookFullName = payload.bookFullName;
           bookUserData.chapterIndex = payload.chapterIndex;
           bookUserData.chapterScrollY = payload.chapterScrollY;
           localStorage.setItem('userData', JSON.stringify(state.userData));
@@ -102,6 +103,10 @@ export default new Vuex.Store({
       if (state.userData.theme['font-size'] < 1.035) {
         state.userData.theme['font-size'] = 1.035;
       }
+      localStorage.setItem('userData', JSON.stringify(state.userData));
+    },
+    logout (state) {
+      state.userData.bookshelf = [];
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
   },
