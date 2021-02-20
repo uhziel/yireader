@@ -1,4 +1,4 @@
-# Using Vue in Markdown
+# 在 Markdown 中使用 Vue
 
 ## Browser API Access Restrictions
 

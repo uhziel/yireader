@@ -4,7 +4,7 @@ module.exports = {
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
    */
-  title: 'Vuepress Docs Boilerplate',
+  title: '易读yireader',
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#description
    */
@@ -31,10 +31,10 @@ module.exports = {
     editLinks: false,
     docsDir: '',
     editLinkText: '',
-    lastUpdated: false,
+    lastUpdated: true,
     nav: [
       {
-        text: 'Guide',
+        text: '指南',
         link: '/guide/',
       },
       {
@@ -42,14 +42,14 @@ module.exports = {
         link: '/config/'
       },
       {
-        text: 'VuePress',
-        link: 'https://v1.vuepress.vuejs.org'
+        text: 'Github',
+        link: 'https://github.com/uhziel/yireader'
       }
     ],
     sidebar: {
       '/guide/': [
         {
-          title: 'Guide',
+          title: '指南',
           collapsable: false,
           children: [
             '',
