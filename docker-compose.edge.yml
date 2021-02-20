@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   yireader:
-    image: uhziel/yireader
+    image: uhziel/yireader:edge
     depends_on:
       - db
     restart: always
@@ -10,7 +10,7 @@ services:
       - SECRET_KEY=Mwxyf3.gwDkMEf
       - MONGODB_URI=mongodb://root:pZXswnYF#ch6iU@db:27017/yireader?authSource=admin&retryWrites=true&w=majority
     ports:
-      - 3001:3001
+      - 3002:3001
 
   db:
     image: mongo:4.4-bionic
