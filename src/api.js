@@ -141,6 +141,10 @@ export function graphql(query, variables) {
     });
 }
 
+export function version() {
+    return axios.get(`${origin}/version`);
+}
+
 export default {
     search,
     book,
