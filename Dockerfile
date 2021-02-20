@@ -1,7 +1,7 @@
-FROM node:12-alpine as build-stage
+FROM node:14-alpine as build-stage
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 COPY babel.config.js vue.config.js ./
 COPY src ./src
 COPY public ./public
