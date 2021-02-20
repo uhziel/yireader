@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "genversion --semi --es6 src/version.js && vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "bootstrap": "^4.5.2",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "genversion": "^2.2.1",
     "mutationobserver-shim": "^0.3.7",
     "popper.js": "^1.16.1",
     "portal-vue": "^2.1.7",
