@@ -34,12 +34,12 @@ module.exports = {
     lastUpdated: true,
     nav: [
       {
-        text: '指南',
-        link: '/guide/',
+        text: '用户手册',
+        link: '/user/',
       },
       {
-        text: 'Config',
-        link: '/config/'
+        text: '开发者手册',
+        link: '/developer/'
       },
       {
         text: 'Github',
@@ -47,9 +47,9 @@ module.exports = {
       }
     ],
     sidebar: {
-      '/guide/': [
+      '/user/': [
         {
-          title: '指南',
+          title: '用户手册',
           collapsable: false,
           children: [
             '',
