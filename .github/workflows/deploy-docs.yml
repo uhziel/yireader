@@ -2,6 +2,7 @@ name: Deploy Docs to Github Pages
 
 on:
   push:
+    branches: [ main ]
     paths:
       - 'docs/**'
 
@@ -16,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     defaults:
-      working-directory: docs
+      run:
+        working-directory: docs
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
