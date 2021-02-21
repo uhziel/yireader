@@ -54,7 +54,6 @@ module.exports = {
           children: [
             '',
             'deploy',
-            'using-vue',
           ]
         }
       ],
