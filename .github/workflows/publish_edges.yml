@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Publish Edges to Docker Hub
+name: Publish Prereleases to Docker Hub
 
 # Controls when the action will run. 
 on:
@@ -28,7 +28,7 @@ jobs:
         id: prep
         run: |
           DOCKER_IMAGE=uhziel/yireader
-          VERSION=edge
+          VERSION=prerelease
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
           fi
@@ -66,7 +66,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
-          file: ./Dockerfile.edge
+          file: ./Dockerfile.prerelease
           push: true
           tags: ${{ steps.prep.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache

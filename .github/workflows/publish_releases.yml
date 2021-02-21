@@ -33,7 +33,7 @@ jobs:
         id: prep
         run: |
           DOCKER_IMAGE=uhziel/yireader
-          VERSION=edge
+          VERSION=prerelease
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
           fi
