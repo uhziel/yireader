@@ -1,3 +1,9 @@
+# 为了更好的安全性，可以选择替换下面出现的 Mwxyf3.gwDkMEf、pZXswnYF#ch6iU 为其他值
+# 启动应用：sudo docker-compose up -d
+# 停止应用：sudo docker-compose down
+# 升级到最新应用：sudo docker-comopse pull 接着 sudo docker-compose up -d
+
+# 如果启动应用失败提示`Bind mount failed: '/volume1/docker/yireader/dbdata' does not exists`，请确保本文件所在目录中存在目录 dbdata/
 version: '3.2'
 services:
   yireader:

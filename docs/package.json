@@ -1,0 +1,19 @@
+{
+  "name": "yireader",
+  "version": "0.0.1",
+  "description": "一款简单易用的个人小说阅读器",
+  "main": "index.js",
+  "authors": {
+    "name": "uhziel",
+    "email": "uhziel@gmail.com"
+  },
+  "repository": "https://github.com/uhziel/yireader",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}
