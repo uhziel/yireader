@@ -62,6 +62,15 @@ module.exports = {
           ]
         }
       ],
+      '/developer/': [
+        {
+          title: '开发者手册',
+          collapsable: false,
+          children: [
+            '',
+          ]
+        }
+      ],
     }
   },
 
