@@ -43,6 +43,10 @@ module.exports = {
         link: '/developer/'
       },
       {
+        text: '更新日志',
+        link: '/changelog'
+      },
+      {
         text: 'Github',
         link: 'https://github.com/uhziel/yireader'
       }
