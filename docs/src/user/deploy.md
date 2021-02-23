@@ -25,8 +25,14 @@
 
 ### 部署预发布版
 
-下载预发布版的 docker-compose.xml 文件 [docker-compose.prerelease.yml](https://github.com/uhziel/yireader/blob/main/docker-compose.prerelease.yml)。其他操作不变。
+::: danger 警告
+预发布版不稳定，请不要用于生产用途
+:::
+
+下载预发布版的 [docker-compose.prerelease.yml](https://github.com/uhziel/yireader/blob/main/docker-compose.prerelease.yml) 并改名为 docker-compose.xml。
+
+其他操作不变。
 
 ```
-curl -OL https://cdn.jsdelivr.net/gh/uhziel/yireader/docker-compose.prerelease.yml
+curl -L https://cdn.jsdelivr.net/gh/uhziel/yireader/docker-compose.prerelease.yml > docker-compose.xml
 ```
