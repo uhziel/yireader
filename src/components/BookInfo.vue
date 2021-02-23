@@ -38,7 +38,7 @@ export default {
       return this.inBookshelf && this.index < this.$store.state.books.all.length - 1;
     },
     bookUserData() {
-      return this.$store.getters.getBookUserData(this.bookFullName);
+      return this.$store.getters.getBookUserData(this.info.id);
     },
     contentChanged() {
       return this.inBookshelf && this.info.contentChanged;

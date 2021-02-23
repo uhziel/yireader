@@ -101,7 +101,6 @@ export default {
   watch: {
     $route() {
       this.tryFetchBookChapter();
-      document.title = this.bookChapter.name + ' - 易读';
     }
   },
   methods: {
@@ -131,6 +130,7 @@ export default {
       graphql(query, variables).then(res => {
         if (!res.data.errors) {
           this.bookChapter = res.data.data.bookChapter;
+          document.title = this.bookChapter.name + ' - 易读';
           this.paragraphs = res.data.data.bookChapter.data.split('\n');
           this.loading = false;
 
