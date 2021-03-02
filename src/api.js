@@ -51,8 +51,6 @@ export function book(bookInfo) {
                 }
                 spine {
                     name
-                    url
-                    chapter
                 }
             }
         }`;
@@ -81,27 +79,6 @@ export function addBookToBookShelf(bookId) {
         }`;
     const variables = {
         id: bookId,
-    };
-    return graphql(query, variables);
-}
-
-export function createBook(bookInfo) {
-    const query = `
-        mutation CreateBook($info: BookInfo!) {
-            createBook(info: $info) {
-                id
-                name
-                author {
-                    name
-                }
-                coverUrl
-                summary
-                url
-                bookSource
-            }
-        }`;
-    const variables = {
-        info: bookInfo,
     };
     return graphql(query, variables);
 }
@@ -148,7 +125,6 @@ export function version() {
 export default {
     search,
     book,
-    createBook,
     detail,
     catalog,
     chapter,
