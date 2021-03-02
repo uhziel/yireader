@@ -1,5 +1,8 @@
 # 部署
 
+::: danger 警告
+当前 app 处于 alpha 阶段，可能存在不稳定、丢失数据的情况，使用前请知悉。
+:::
 ## 使用 docker-compose 进行部署
 
 1. 新建一个目录 yireader 并进入其中。（对于群晖来说，推荐放到 /volume1/docker/ 里）
@@ -26,7 +29,7 @@
 ### 部署预发布版
 
 ::: danger 警告
-预发布版不稳定，请不要用于生产用途
+预发布版不稳定，请不要用于生产用途，仅用于测试最新功能。
 :::
 
 下载预发布版的 [docker-compose.prerelease.yml](https://github.com/uhziel/yireader/blob/main/docker-compose.prerelease.yml) 并改名为 docker-compose.xml。
