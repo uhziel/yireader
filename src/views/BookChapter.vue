@@ -5,9 +5,7 @@
       <h1 class="text-center">{{bookChapter.name}}</h1>
       <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
 
-      <div class="content">
-        <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
-      </div>
+      <div class="chapterContent" :style="contentStyle" v-html="paragraphs" />
       <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
       <b-button pill class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</b-button>
       <b-button pill class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</b-button>
@@ -31,7 +29,7 @@ export default {
       bookChapter: {
         name: "",
       },
-      paragraphs: [],
+      paragraphs: "",
       loading: true,
       readingTimeoutId: null,
       lastChapterScrollY: 0.0,
@@ -131,7 +129,7 @@ export default {
         if (!res.data.errors) {
           this.bookChapter = res.data.data.bookChapter;
           document.title = this.bookChapter.name + ' - 易读';
-          this.paragraphs = res.data.data.bookChapter.data.split('\n');
+          this.paragraphs = res.data.data.bookChapter.data;
           this.loading = false;
 
           this.$nextTick(function () {
@@ -182,8 +180,8 @@ export default {
 }
 </script>
 
-<style scoped>
-p {
+<style>
+.chapterContent {
   text-indent: 2em;
   /* via https://perishablepress.com/wrapping-content/ */
 	white-space: pre;           /* CSS 2.0 */
