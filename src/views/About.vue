@@ -1,9 +1,8 @@
 <template>
   <div class="about">
-    <p>易读是一款简单易用的个人小说阅读器。</p>
     <p>yireader 版本: v{{version}}</p>
     <p v-if="apiVersion.length > 0">yireader-api 版本: v{{apiVersion}}</p>
-    <p>项目地址：<a href="https://github.com/uhziel/yireader" target="_blank">https://github.com/uhziel/yireader</a></p>
+    <p>帮助文档：<a href="https://uhziel.github.io/yireader/" target="_blank">https://uhziel.github.io/yireader/</a></p>
   </div>
 </template>
 
