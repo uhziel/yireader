@@ -5,7 +5,7 @@
       <h1 class="text-center">{{bookChapter.name}}</h1>
       <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
 
-      <div class="chapterContent" :style="contentStyle" v-html="paragraphs" />
+      <div class="chapterContent" :style="contentStyle" v-html="bookChapter.data" />
       <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
       <b-button pill class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</b-button>
       <b-button pill class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</b-button>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {graphql} from "../api.js";
+import {queryBookChapter} from "../api.js";
 import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
@@ -28,8 +28,9 @@ export default {
     return {
       bookChapter: {
         name: "",
+        data: "",
       },
-      paragraphs: "",
+      bookChapterCaches: {},
       loading: true,
       readingTimeoutId: null,
       lastChapterScrollY: 0.0,
@@ -103,34 +104,15 @@ export default {
   },
   methods: {
     tryFetchBookChapter() {
-      const query = `
-        query BookChapter($info: BookChapterInfo!) {
-          bookChapter(info: $info) {
-            index
-            name
-            data
-            prev {
-              index
-              name
-            }
-            next {
-              index
-              name
-            }
-          }
-        }`;
-      const variables = {
-          info: {
-            bookId: this.bookId,
-            bookChapterIndex: this.chapterIndex,
-          }
-      };
-      graphql(query, variables).then(res => {
+      this.queryBookChapterWithCache(this.bookId, this.chapterIndex).then(res => {
         if (!res.data.errors) {
           this.bookChapter = res.data.data.bookChapter;
+          if (res.data.data.isCache) {
+            console.log('hit the cache: ', this.bookChapter.name);
+          } else {
+            this.bookChapterCaches[this.bookChapter.index] = this.bookChapter;
+          }
           document.title = this.bookChapter.name + ' - 易读';
-          this.paragraphs = res.data.data.bookChapter.data;
-          this.loading = false;
 
           this.$nextTick(function () {
             this.$root.$emit('scroll-to', this.lastChapterScrollY);
@@ -144,11 +126,45 @@ export default {
             chapterIndex: this.chapterIndex,
             chapterScrollY: window.scrollY,
           });
+          this.clearOutdatedCache(this.chapterIndex);
         } else {
           //TODO 错误提示
           console.error(res.data.errors);
         }
       }).catch(e => console.error(e));
+      this.queryBookChapterWithCache(this.bookId, this.chapterIndex - 1).then(res => {
+        if (!res.data.errors && !res.data.data.isCache) {
+          this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
+        }
+      });
+      this.queryBookChapterWithCache(this.bookId, this.chapterIndex + 1).then(res => {
+        if (!res.data.errors && !res.data.data.isCache) {
+          this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
+        }
+      });
+    },
+    async queryBookChapterWithCache(bookId, chapterIndex) {
+      if (chapterIndex < 0) {
+        return {
+          data: {
+            errors: [
+              'chapterIndex cannot < 0.'
+            ]
+          }
+        };
+      }
+      if (this.bookChapterCaches[chapterIndex]) {
+        return {
+          data: {
+            data: {
+              bookChapter: this.bookChapterCaches[chapterIndex],
+              isCache: true
+            }
+          }
+        };
+      } else {
+        return queryBookChapter(bookId, chapterIndex);
+      }
     },
     changeFontSize(delta) {
       this.$store.commit({
@@ -172,6 +188,17 @@ export default {
         chapterIndex: this.chapterIndex,
         chapterScrollY: window.scrollY,
       });
+    },
+    clearOutdatedCache(curChapterIndex) {
+      let toDel = [];
+      for (const chapterIndex in this.bookChapterCaches) {
+        if (Math.abs(chapterIndex - curChapterIndex) > 2) {
+          toDel.push(chapterIndex);
+        }
+      }
+      for (const chapterIndex of toDel) {
+        delete this.bookChapterCaches[chapterIndex];
+      } 
     }
   },
   title() {

@@ -122,6 +122,32 @@ export function version() {
     return axios.get(`${origin}/version`);
 }
 
+export function queryBookChapter(bookId, bookChapterIndex) {
+    const query = `
+    query BookChapter($info: BookChapterInfo!) {
+      bookChapter(info: $info) {
+        index
+        name
+        data
+        prev {
+          index
+          name
+        }
+        next {
+          index
+          name
+        }
+      }
+    }`;
+  const variables = {
+      info: {
+        bookId,
+        bookChapterIndex,
+      }
+  };
+  return graphql(query, variables);
+}
+
 export default {
     search,
     book,
