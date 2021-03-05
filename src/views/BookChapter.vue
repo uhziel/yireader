@@ -65,7 +65,7 @@ export default {
     },
   },
   created() {
-    this.tryFetchBookChapter();
+    this.tryFetchBookChapter(this.chapterIndex);
     const userData = this.bookUserData;
     if (userData && userData.chapterScrollY && this.chapterIndex == userData.chapterIndex) {
       console.log("set lastChapterScrollY:", userData.chapterScrollY);
@@ -97,14 +97,12 @@ export default {
     });
     next();
   },
-  watch: {
-    $route() {
-      this.tryFetchBookChapter();
-    }
+  beforeRouteUpdate(to, from, next) {
+    this.tryFetchBookChapter(to.params.chapterIndex, next);
   },
   methods: {
-    tryFetchBookChapter() {
-      this.queryBookChapterWithCache(this.bookId, this.chapterIndex).then(res => {
+    tryFetchBookChapter(curChapterIndex, next) {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex).then(res => {
         if (!res.data.errors) {
           this.bookChapter = res.data.data.bookChapter;
           if (res.data.data.isCache) {
@@ -113,6 +111,9 @@ export default {
             this.bookChapterCaches[this.bookChapter.index] = this.bookChapter;
           }
           document.title = this.bookChapter.name + ' - 易读';
+          if (next) {
+            next();
+          }
 
           this.$nextTick(function () {
             this.$root.$emit('scroll-to', this.lastChapterScrollY);
@@ -123,21 +124,21 @@ export default {
             type: 'setReading',
             bookId: this.bookId,
             bookFullName: this.bookFullName,
-            chapterIndex: this.chapterIndex,
+            chapterIndex: curChapterIndex,
             chapterScrollY: window.scrollY,
           });
-          this.clearOutdatedCache(this.chapterIndex);
+          this.clearOutdatedCache(curChapterIndex);
         } else {
           //TODO 错误提示
           console.error(res.data.errors);
         }
       }).catch(e => console.error(e));
-      this.queryBookChapterWithCache(this.bookId, this.chapterIndex - 1).then(res => {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex - 1).then(res => {
         if (!res.data.errors && !res.data.data.isCache) {
           this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
         }
       });
-      this.queryBookChapterWithCache(this.bookId, this.chapterIndex + 1).then(res => {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex + 1).then(res => {
         if (!res.data.errors && !res.data.data.isCache) {
           this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
         }
