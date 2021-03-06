@@ -25,9 +25,7 @@ const actions = {
           id
           inBookshelf
           name
-          author {
-            name
-          }
+          authorName
           coverUrl
           summary
           contentChanged

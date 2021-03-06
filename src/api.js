@@ -16,9 +16,7 @@ export function search(key) {
         query Search($name: String!) {
             search(name: $name) {
                 name
-                author {
-                    name
-                }
+                authorName
                 summary
                 coverUrl
                 url
@@ -37,9 +35,7 @@ export function book(bookInfo) {
             book(info: $info) {
                 id name
                 inBookshelf
-                author {
-                    name
-                }
+                authorName
                 coverUrl
                 lastChapter
                 status

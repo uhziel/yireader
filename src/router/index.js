@@ -34,21 +34,28 @@ Vue.use(VueRouter)
     props: true
   },
   {
-    path: '/bookdetail/:name-:author',
+    path: '/bookdetail/:bookId',
     name: 'BookDetail',
     component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
-    props: true
+    props: route => {
+      const v = {
+        bookId: route.params.bookId,
+        name: route.query.name,
+        authorName: route.query.authorName,
+      };
+      return v;
+    },
   },
   {
-    path: '/bookchapter/:name-:author-:bookId/:chapterIndex',
+    path: '/bookchapter/:bookId/:chapterIndex',
     name: 'BookChapter',
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
     props: route => {
       const v = {
-        name: route.params.name,
-        author: route.params.author,
         bookId: route.params.bookId,
         chapterIndex: parseInt(route.params.chapterIndex),
+        name: route.query.name,
+        authorName: route.query.authorName,
       };
       return v;
     },

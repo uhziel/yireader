@@ -8,7 +8,7 @@
     <dl>
       <dt>
         <router-link class="name" :to="detailRoute">{{info.name}}<span class="redpoint" v-if="contentChanged" /></router-link>
-        <span class="author">{{info.author.name}}</span>
+        <span class="author">{{info.authorName}}</span>
       </dt>
       <dd>{{info.summary}}</dd>
       <b-button-group class="operate my-3" size="sm">
@@ -29,7 +29,7 @@ export default {
   props: ['info', 'inBookshelf', 'index'],
   computed: {
     bookFullName() {
-      return this.info.name + '-' + this.info.author.name;
+      return this.info.name + '-' + this.info.authorName;
     },
     moveUpEnable() {
       return this.inBookshelf && this.index > 0;
@@ -46,8 +46,8 @@ export default {
     detailRoute() {
       if (!this.inBookshelf) {
         return {
-          name:"BookDetail",
-          params:{name: this.info.name, author: this.info.author.name},
+          name:'BookDetail',
+          params:{bookId: this.info.bookId},
           query: this.info
         };
       }
@@ -62,28 +62,32 @@ export default {
       return {
         name: 'BookChapter',
         params: {
-          name: this.info.name,
-          author: this.info.author.name,
           bookId: this.info.id,
           chapterIndex: chapterIndex,
+        },
+        query: {
+          name: this.info.name,
+          authorName: this.info.authorName,
         }
       };
     },
     readingRoute() {
       if (!this.inBookshelf) {
         return {
-          name:"BookDetail",
-          params:{name: this.info.name, author: this.info.author.name},
+          name:'BookDetail',
+          params:{bookId: this.info.bookId},
           query: this.info
         };
       }
       return {
         name: 'BookChapter',
         params: {
-          name: this.info.name,
-          author: this.info.author.name,
-          bookId: this.info.id,
+          bookId: this.info.id,          
           chapterIndex: this.info.readingChapter.index,
+        },
+        query: {
+          name: this.info.name,
+          authorName: this.info.authorName,
         }
       };
     },

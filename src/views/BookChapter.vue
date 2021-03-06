@@ -20,7 +20,7 @@ import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
   name: 'BookChapter',
-  props: {name: String, author: String, bookId: String, chapterIndex: Number},
+  props: {name: String, authorName: String, bookId: String, chapterIndex: Number},
   components: {
     ChapterNav
   },
@@ -40,9 +40,7 @@ export default {
     bookInfo() {
       return {
         name: this.name,
-        author: {
-          name: this.author,
-        },
+        authorName: this.authorName,
         bookId: this.bookId,
       }
     },
@@ -53,7 +51,7 @@ export default {
       return this.bookChapter && this.bookChapter.next;
     },
     bookFullName() {
-      return this.name + '-' + this.author;
+      return this.name + '-' + this.authorName;
     },
     bookUserData() {
       return this.$store.getters.getBookUserData(this.bookId);
@@ -72,7 +70,7 @@ export default {
       this.lastChapterScrollY = userData.chapterScrollY;
     }   
     console.log("name: ", this.name);
-    console.log("author: ", this.author);
+    console.log("authorName: ", this.authorName);
     console.log("chapterIndex: ", this.chapterIndex);
     console.log('chapterIndex type: ', typeof this.chapterIndex);
   },
