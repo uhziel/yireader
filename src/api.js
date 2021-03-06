@@ -122,7 +122,7 @@ export function version() {
     return axios.get(`${origin}/version`);
 }
 
-export function queryBookChapter(bookId, bookChapterIndex) {
+export function queryBookChapter(bookId, bookChapterIndex, read) {
     const query = `
     query BookChapter($info: BookChapterInfo!) {
       bookChapter(info: $info) {
@@ -143,6 +143,24 @@ export function queryBookChapter(bookId, bookChapterIndex) {
       info: {
         bookId,
         bookChapterIndex,
+        read,
+      }
+  };
+  return graphql(query, variables);
+}
+
+export function notifyReadBookChapter(bookId, bookChapterIndex) {
+    const query = `
+    query BookChapter($info: BookChapterInfo!) {
+      bookChapter(info: $info) {
+        index
+      }
+    }`;
+  const variables = {
+      info: {
+        bookId,
+        bookChapterIndex,
+        read: true
       }
   };
   return graphql(query, variables);

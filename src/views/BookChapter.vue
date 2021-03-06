@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {queryBookChapter} from "../api.js";
+import {queryBookChapter, notifyReadBookChapter} from "../api.js";
 import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     tryFetchBookChapter(curChapterIndex, next) {
-      this.queryBookChapterWithCache(this.bookId, curChapterIndex).then(res => {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex, true).then(res => {
         if (!res.data.errors) {
           this.bookChapter = res.data.data.bookChapter;
           if (res.data.data.isCache) {
@@ -133,18 +133,18 @@ export default {
           console.error(res.data.errors);
         }
       }).catch(e => console.error(e));
-      this.queryBookChapterWithCache(this.bookId, curChapterIndex - 1).then(res => {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex - 1, false).then(res => {
         if (!res.data.errors && !res.data.data.isCache) {
           this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
         }
       });
-      this.queryBookChapterWithCache(this.bookId, curChapterIndex + 1).then(res => {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex + 1, false).then(res => {
         if (!res.data.errors && !res.data.data.isCache) {
           this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
         }
       });
     },
-    async queryBookChapterWithCache(bookId, chapterIndex) {
+    async queryBookChapterWithCache(bookId, chapterIndex, read) {
       if (chapterIndex < 0) {
         return {
           data: {
@@ -155,6 +155,9 @@ export default {
         };
       }
       if (this.bookChapterCaches[chapterIndex]) {
+        if (read) {
+          notifyReadBookChapter(bookId, chapterIndex);
+        }
         return {
           data: {
             data: {
@@ -164,7 +167,7 @@ export default {
           }
         };
       } else {
-        return queryBookChapter(bookId, chapterIndex);
+        return queryBookChapter(bookId, chapterIndex, read);
       }
     },
     changeFontSize(delta) {
