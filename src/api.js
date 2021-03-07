@@ -29,6 +29,61 @@ export function search(key) {
     return graphql(query, variables);
 }
 
+// Book
+export function apiQueryBooks() {
+    const query = `
+        query Books {
+        books {
+            id
+            inBookshelf
+            name
+            authorName
+            coverUrl
+            summary
+            contentChanged
+            bookSource
+            readingChapter {
+                index
+                name
+            }
+        }
+        }`;
+    return graphql(query);
+}
+
+export function apiDeleteBook(bookSourceId) {
+    const query = `
+        mutation DeleteBook($id: ID!) {
+            deleteBook(id: $id)
+        }`;
+    const variables = {
+        id: bookSourceId,
+    };
+    return graphql(query, variables);
+}
+
+export function apiMoveUpBook(bookId) {
+    const query = `
+        mutation MoveUpBook($id: ID!) {
+            moveUpBook(id: $id)
+        }`;
+    const variables = {
+        id: bookId,
+    };
+    return graphql(query, variables);
+}
+
+export function apiMoveDownBook(bookId) {
+    const query = `
+        mutation MoveDownBook($id: ID!) {
+            moveDownBook(id: $id)
+        }`;
+    const variables = {
+        id: bookId,
+    };
+    return graphql(query, variables);
+}
+
 export function book(bookInfo) {
     const query = `
         query Book($info: BookInfo!) {
@@ -79,6 +134,59 @@ export function addBookToBookShelf(bookId) {
     return graphql(query, variables);
 }
 
+// BookSource
+export function apiQueryBookSources() {
+    const query = `
+        query BookSources {
+            bookSources {
+                id name url enableSearch
+            } 
+        }`;
+    return graphql(query);
+}
+
+export function apiCreateBookSource(payload) {
+    const query = `
+        mutation CreateBookSource($downloadUrl: String!) {
+            createBookSource(downloadUrl: $downloadUrl) {
+                id name url version enableSearch
+            }
+        }`;
+    return graphql(query, payload);
+}
+
+export function apiDeleteBookSource(payload) {
+    const query = `
+        mutation DeleteBookSource($id: ID!) {
+            deleteBookSource(id: $id)
+        }`;
+    return graphql(query, payload);
+}
+
+export function apiMoveUpBookSource(payload) {
+    const query = `
+        mutation MoveUpBookSource($id: ID!) {
+            moveUpBookSource(id: $id)
+        }`;
+    return graphql(query, payload);
+}
+
+export function apiMoveDownBookSource(payload) {
+    const query = `
+        mutation MoveDownBookSource($id: ID!) {
+            moveDownBookSource(id: $id)
+        }`;
+    return graphql(query, payload);
+}
+
+export function apiEnableBookSource(payload) {
+    const query = `
+        mutation EnableBookSource($id: ID!, $value: Boolean) {
+            enableSearchBookSource(id: $id, value: $value)  
+        }`;
+    return graphql(query, payload);
+}
+
 export function detail(bookInfo) {
     return axios.post(`${origin}/detail`, bookInfo);
 }
@@ -103,7 +211,7 @@ export function changePassword(user) {
     return axios.post(`${origin}/users/changepassword`, user);
 }
 
-export function graphql(query, variables) {
+function graphql(query, variables) {
     const payload = {
         query,
         variables
