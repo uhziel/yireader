@@ -17,7 +17,7 @@
         <b-button class="mx-1" variant="secondary" v-if="inBookshelf" :disabled="!moveDownEnable" @click="moveDown">下移</b-button>
       </b-button-group>
       <div>
-        <span v-if="info.readingChapter">已读到：<router-link :to="readingRoute">{{info.readingChapter.name}}</router-link></span>
+        <span v-if="info.readingChapter">云进度：<router-link :to="readingRoute">{{info.readingChapter.name}}</router-link></span>
       </div>
     </dl>
   </div>

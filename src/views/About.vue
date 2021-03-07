@@ -3,6 +3,7 @@
     <p>yireader 版本: v{{version}}</p>
     <p v-if="apiVersion.length > 0">yireader-api 版本: v{{apiVersion}}</p>
     <p>帮助文档：<a href="https://uhziel.github.io/yireader/" target="_blank">https://uhziel.github.io/yireader/</a></p>
+    <p>报告问题：<a href="https://github.com/uhziel/yireader/issues" target="_blank">https://github.com/uhziel/yireader/issues</a></p>
   </div>
 </template>
 
