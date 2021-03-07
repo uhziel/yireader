@@ -68,11 +68,7 @@ export default {
     if (userData && userData.chapterScrollY && this.chapterIndex == userData.chapterIndex) {
       console.log("set lastChapterScrollY:", userData.chapterScrollY);
       this.lastChapterScrollY = userData.chapterScrollY;
-    }   
-    console.log("name: ", this.name);
-    console.log("authorName: ", this.authorName);
-    console.log("chapterIndex: ", this.chapterIndex);
-    console.log('chapterIndex type: ', typeof this.chapterIndex);
+    }
   },
   beforeMount() {
     window.addEventListener('scroll', this.onScroll);
@@ -202,9 +198,6 @@ export default {
         delete this.bookChapterCaches[chapterIndex];
       } 
     }
-  },
-  title() {
-    return this.bookChapter.name + " - 易读";
   }
 }
 </script>
