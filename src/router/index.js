@@ -40,7 +40,7 @@ Vue.use(VueRouter)
     props: true,
   },
   {
-    path: '/bookdetail/:bookId',
+    path: '/bookdetail/:name-:authorName',
     name: 'BookDetail',
     component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
     meta: {
@@ -48,9 +48,9 @@ Vue.use(VueRouter)
     },
     props: route => {
       const v = {
-        bookId: route.params.bookId,
-        name: route.query.name,
-        authorName: route.query.authorName,
+        name: route.params.name,
+        authorName: route.params.authorName,
+        bookId: route.query.bookId,
       };
       return v;
     },

@@ -47,8 +47,11 @@ export default {
       if (!this.inBookshelf) {
         return {
           name:'BookDetail',
-          params:{bookId: this.info.bookId},
-          query: this.info
+          params: {
+            name: this.info.name,
+            authorName: this.info.authorName
+          },
+          query: this.info,
         };
       }
       const bookUserData = this.bookUserData;
@@ -75,7 +78,10 @@ export default {
       if (!this.inBookshelf) {
         return {
           name:'BookDetail',
-          params:{bookId: this.info.bookId},
+          params:{
+            name: this.info.name,
+            authorName: this.info.authorName
+          },
           query: this.info
         };
       }
