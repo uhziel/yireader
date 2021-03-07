@@ -26,29 +26,48 @@ Vue.use(VueRouter)
     path: '/booksources',
     name: 'BookSources',
     component: () => import(/* webpackChunkName: "booksource" */ '../views/BookSources.vue'),
+    meta: {
+      requiresAuth: true
+    },
   },
   {
     path: '/search/:searchKey',
     name: 'Search',
     component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue'),
-    props: true
+    meta: {
+      requiresAuth: true
+    },
+    props: true,
   },
   {
-    path: '/bookdetail/:name-:author',
+    path: '/bookdetail/:name-:authorName',
     name: 'BookDetail',
     component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
-    props: true
-  },
-  {
-    path: '/bookchapter/:name-:author-:bookId/:chapterIndex',
-    name: 'BookChapter',
-    component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
+    meta: {
+      requiresAuth: true
+    },
     props: route => {
       const v = {
         name: route.params.name,
-        author: route.params.author,
+        authorName: route.params.authorName,
+        bookId: route.query.bookId,
+      };
+      return v;
+    },
+  },
+  {
+    path: '/bookchapter/:bookId/:chapterIndex',
+    name: 'BookChapter',
+    component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
+    meta: {
+      requiresAuth: true
+    },
+    props: route => {
+      const v = {
         bookId: route.params.bookId,
         chapterIndex: parseInt(route.params.chapterIndex),
+        name: route.query.name,
+        authorName: route.query.authorName,
       };
       return v;
     },

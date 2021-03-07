@@ -1,4 +1,4 @@
-import {graphql} from "../../api.js"
+import {apiQueryBooks, apiDeleteBook, apiMoveUpBook, apiMoveDownBook} from "../../api"
 
 const state = () => ({
   all: [],
@@ -19,40 +19,14 @@ const mutations = {
 
 const actions = {
   books({commit}) {
-    const query = `
-      query Books {
-        books {
-          id
-          inBookshelf
-          name
-          author {
-            name
-          }
-          coverUrl
-          summary
-          contentChanged
-          bookSource
-          readingChapter {
-            index
-            name
-          }
-        }
-      }`;
-    graphql(query).then(res => {
+    apiQueryBooks().then(res => {
       if (res.data.data && res.data.data.books) {
         commit('setSimpleBookInfos', res.data.data.books);
       }
     }).catch(e => console.error(e));
   },
   deleteBook({commit, dispatch}, bookSourceId) {
-    const query = `
-      mutation DeleteBook($id: ID!) {
-        deleteBook(id: $id)
-      }`;
-    const variables = {
-        id: bookSourceId,
-    };
-    graphql(query, variables).then(res => {
+    apiDeleteBook(bookSourceId).then(res => {
       if (!res.data.errors) {
         dispatch('books');
       } else {
@@ -61,14 +35,7 @@ const actions = {
     }).catch(e => console.error(e));
   },
   moveUpBook({commit, dispatch}, bookId) {
-    const query = `
-      mutation MoveUpBook($id: ID!) {
-        moveUpBook(id: $id)
-      }`;
-    const variables = {
-        id: bookId,
-    };
-    graphql(query, variables).then(res => {
+    apiMoveUpBook(bookId).then(res => {
       if (!res.data.errors) {
         dispatch('books');
       } else {
@@ -77,14 +44,7 @@ const actions = {
     }).catch(e => console.error(e));
   },
   moveDownBook({commit, dispatch}, bookId) {
-    const query = `
-      mutation MoveDownBook($id: ID!) {
-        moveDownBook(id: $id)
-      }`;
-    const variables = {
-        id: bookId,
-    };
-    graphql(query, variables).then(res => {
+    apiMoveDownBook(bookId).then(res => {
       if (!res.data.errors) {
         dispatch('books');
       } else {

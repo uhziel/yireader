@@ -11,14 +11,12 @@ export function setAuthorizationHeader(value) {
     }
 }
 
-export function search(key) {
+export function apiSearch(key) {
     const query = `
         query Search($name: String!) {
             search(name: $name) {
                 name
-                author {
-                    name
-                }
+                authorName
                 summary
                 coverUrl
                 url
@@ -31,15 +29,68 @@ export function search(key) {
     return graphql(query, variables);
 }
 
-export function book(bookInfo) {
+// Book
+export function apiQueryBooks() {
+    const query = `
+        query Books {
+        books {
+            id
+            inBookshelf
+            name
+            authorName
+            coverUrl
+            summary
+            contentChanged
+            bookSource
+            readingChapter {
+                index
+                name
+            }
+        }
+        }`;
+    return graphql(query);
+}
+
+export function apiDeleteBook(bookSourceId) {
+    const query = `
+        mutation DeleteBook($id: ID!) {
+            deleteBook(id: $id)
+        }`;
+    const variables = {
+        id: bookSourceId,
+    };
+    return graphql(query, variables);
+}
+
+export function apiMoveUpBook(bookId) {
+    const query = `
+        mutation MoveUpBook($id: ID!) {
+            moveUpBook(id: $id)
+        }`;
+    const variables = {
+        id: bookId,
+    };
+    return graphql(query, variables);
+}
+
+export function apiMoveDownBook(bookId) {
+    const query = `
+        mutation MoveDownBook($id: ID!) {
+            moveDownBook(id: $id)
+        }`;
+    const variables = {
+        id: bookId,
+    };
+    return graphql(query, variables);
+}
+
+export function apiQueryBook(bookInfo) {
     const query = `
         query Book($info: BookInfo!) {
             book(info: $info) {
                 id name
                 inBookshelf
-                author {
-                    name
-                }
+                authorName
                 coverUrl
                 lastChapter
                 status
@@ -51,8 +102,6 @@ export function book(bookInfo) {
                 }
                 spine {
                     name
-                    url
-                    chapter
                 }
             }
         }`;
@@ -62,7 +111,7 @@ export function book(bookInfo) {
     return graphql(query, variables);
 }
 
-export function reverseOrderBook(bookId, reverse) {
+export function apiReverseOrderBook(bookId, reverse) {
     const query = `
         mutation ReverseOrderBook($id: ID!, $reverse: Boolean!) {
             reverseOrderBook(id: $id, reverse: $reverse)
@@ -74,7 +123,7 @@ export function reverseOrderBook(bookId, reverse) {
     return graphql(query, variables);
 }
 
-export function addBookToBookShelf(bookId) {
+export function apiAddBookToBookShelf(bookId) {
     const query = `
         mutation AddBookToBookShelf($id: ID!) {
             addBookToBookShelf(id: $id)
@@ -85,52 +134,72 @@ export function addBookToBookShelf(bookId) {
     return graphql(query, variables);
 }
 
-export function createBook(bookInfo) {
+// BookSource
+export function apiQueryBookSources() {
     const query = `
-        mutation CreateBook($info: BookInfo!) {
-            createBook(info: $info) {
-                id
-                name
-                author {
-                    name
-                }
-                coverUrl
-                summary
-                url
-                bookSource
+        query BookSources {
+            bookSources {
+                id name url enableSearch
+            } 
+        }`;
+    return graphql(query);
+}
+
+export function apiCreateBookSource(payload) {
+    const query = `
+        mutation CreateBookSource($downloadUrl: String!) {
+            createBookSource(downloadUrl: $downloadUrl) {
+                id name url version enableSearch
             }
         }`;
-    const variables = {
-        info: bookInfo,
-    };
-    return graphql(query, variables);
+    return graphql(query, payload);
 }
 
-export function detail(bookInfo) {
-    return axios.post(`${origin}/detail`, bookInfo);
+export function apiDeleteBookSource(payload) {
+    const query = `
+        mutation DeleteBookSource($id: ID!) {
+            deleteBookSource(id: $id)
+        }`;
+    return graphql(query, payload);
 }
 
-export function catalog(bookDetail) {
-    return axios.post(`${origin}/catalog`, bookDetail);
+export function apiMoveUpBookSource(payload) {
+    const query = `
+        mutation MoveUpBookSource($id: ID!) {
+            moveUpBookSource(id: $id)
+        }`;
+    return graphql(query, payload);
 }
 
-export function chapter(chapterInfo) {
-    return axios.post(`${origin}/chapter`, chapterInfo);
+export function apiMoveDownBookSource(payload) {
+    const query = `
+        mutation MoveDownBookSource($id: ID!) {
+            moveDownBookSource(id: $id)
+        }`;
+    return graphql(query, payload);
 }
 
-export function login(user) {
+export function apiEnableBookSource(payload) {
+    const query = `
+        mutation EnableBookSource($id: ID!, $value: Boolean) {
+            enableSearchBookSource(id: $id, value: $value)  
+        }`;
+    return graphql(query, payload);
+}
+
+export function apiLogin(user) {
     return axios.post(`${origin}/users/login`, user);
 }
 
-export function register(user) {
+export function apiRegister(user) {
     return axios.post(`${origin}/users/register`, user);
 }
 
-export function changePassword(user) {
+export function apiChangePassword(user) {
     return axios.post(`${origin}/users/changepassword`, user);
 }
 
-export function graphql(query, variables) {
+function graphql(query, variables) {
     const payload = {
         query,
         variables
@@ -141,19 +210,50 @@ export function graphql(query, variables) {
     });
 }
 
-export function version() {
-    return axios.get(`${origin}/version`);
+export function apiStatus() {
+    return axios.get(`${origin}/status`);
 }
 
-export default {
-    search,
-    book,
-    createBook,
-    detail,
-    catalog,
-    chapter,
-    login,
-    register,
-    changePassword,
-    graphql,
-};
+export function apiQueryBookChapter(bookId, bookChapterIndex, read) {
+    const query = `
+    query BookChapter($info: BookChapterInfo!) {
+      bookChapter(info: $info) {
+        index
+        name
+        data
+        prev {
+          index
+          name
+        }
+        next {
+          index
+          name
+        }
+      }
+    }`;
+  const variables = {
+      info: {
+        bookId,
+        bookChapterIndex,
+        read,
+      }
+  };
+  return graphql(query, variables);
+}
+
+export function apiNotifyReadBookChapter(bookId, bookChapterIndex) {
+    const query = `
+    query BookChapter($info: BookChapterInfo!) {
+      bookChapter(info: $info) {
+        index
+      }
+    }`;
+  const variables = {
+      info: {
+        bookId,
+        bookChapterIndex,
+        read: true
+      }
+  };
+  return graphql(query, variables);
+}

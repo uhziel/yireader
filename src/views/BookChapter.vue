@@ -5,9 +5,7 @@
       <h1 class="text-center">{{bookChapter.name}}</h1>
       <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
 
-      <div class="content">
-        <p :style="contentStyle" v-for="(paragraph, index) in paragraphs" :key="index">{{paragraph}}</p>
-      </div>
+      <div class="chapterContent" :style="contentStyle" v-html="bookChapter.data" />
       <ChapterNav :bookInfo="bookInfo" :chapterIndex="chapterIndex" :prevChapterInfo="prevChapterInfo" :nextChapterInfo="nextChapterInfo" />
       <b-button pill class="incFontSize" @click.prevent="changeFontSize(0.1)">增大</b-button>
       <b-button pill class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</b-button>
@@ -17,12 +15,12 @@
 </template>
 
 <script>
-import {graphql} from "../api.js";
+import {apiQueryBookChapter, apiNotifyReadBookChapter} from "../api";
 import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
   name: 'BookChapter',
-  props: {name: String, author: String, bookId: String, chapterIndex: Number},
+  props: {name: String, authorName: String, bookId: String, chapterIndex: Number},
   components: {
     ChapterNav
   },
@@ -30,8 +28,9 @@ export default {
     return {
       bookChapter: {
         name: "",
+        data: "",
       },
-      paragraphs: [],
+      bookChapterCaches: {},
       loading: true,
       readingTimeoutId: null,
       lastChapterScrollY: 0.0,
@@ -41,9 +40,7 @@ export default {
     bookInfo() {
       return {
         name: this.name,
-        author: {
-          name: this.author,
-        },
+        authorName: this.authorName,
         bookId: this.bookId,
       }
     },
@@ -54,28 +51,24 @@ export default {
       return this.bookChapter && this.bookChapter.next;
     },
     bookFullName() {
-      return this.name + '-' + this.author;
+      return this.name + '-' + this.authorName;
     },
     bookUserData() {
       return this.$store.getters.getBookUserData(this.bookId);
     },
     contentStyle() {
       return {
-        'font-size': this.$store.state.userData.theme['font-size'] + 'em',
+        'font-size': this.$store.getters.fontSize,
       };
     },
   },
   created() {
-    this.tryFetchBookChapter();
+    this.tryFetchBookChapter(this.chapterIndex);
     const userData = this.bookUserData;
     if (userData && userData.chapterScrollY && this.chapterIndex == userData.chapterIndex) {
       console.log("set lastChapterScrollY:", userData.chapterScrollY);
       this.lastChapterScrollY = userData.chapterScrollY;
-    }   
-    console.log("name: ", this.name);
-    console.log("author: ", this.author);
-    console.log("chapterIndex: ", this.chapterIndex);
-    console.log('chapterIndex type: ', typeof this.chapterIndex);
+    }
   },
   beforeMount() {
     window.addEventListener('scroll', this.onScroll);
@@ -98,41 +91,23 @@ export default {
     });
     next();
   },
-  watch: {
-    $route() {
-      this.tryFetchBookChapter();
-      document.title = this.bookChapter.name + ' - 易读';
-    }
+  beforeRouteUpdate(to, from, next) {
+    this.tryFetchBookChapter(to.params.chapterIndex, next);
   },
   methods: {
-    tryFetchBookChapter() {
-      const query = `
-        query BookChapter($info: BookChapterInfo!) {
-          bookChapter(info: $info) {
-            index
-            name
-            data
-            prev {
-              index
-              name
-            }
-            next {
-              index
-              name
-            }
-          }
-        }`;
-      const variables = {
-          info: {
-            bookId: this.bookId,
-            bookChapterIndex: this.chapterIndex,
-          }
-      };
-      graphql(query, variables).then(res => {
+    tryFetchBookChapter(curChapterIndex, next) {
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex, true).then(res => {
         if (!res.data.errors) {
           this.bookChapter = res.data.data.bookChapter;
-          this.paragraphs = res.data.data.bookChapter.data.split('\n');
-          this.loading = false;
+          if (res.data.data.isCache) {
+            console.log('hit the cache: ', this.bookChapter.name);
+          } else {
+            this.bookChapterCaches[this.bookChapter.index] = this.bookChapter;
+          }
+          document.title = this.bookChapter.name + ' - 易读';
+          if (next) {
+            next();
+          }
 
           this.$nextTick(function () {
             this.$root.$emit('scroll-to', this.lastChapterScrollY);
@@ -143,14 +118,51 @@ export default {
             type: 'setReading',
             bookId: this.bookId,
             bookFullName: this.bookFullName,
-            chapterIndex: this.chapterIndex,
+            chapterIndex: curChapterIndex,
             chapterScrollY: window.scrollY,
           });
+          this.clearOutdatedCache(curChapterIndex);
         } else {
           //TODO 错误提示
           console.error(res.data.errors);
         }
       }).catch(e => console.error(e));
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex - 1, false).then(res => {
+        if (!res.data.errors && !res.data.data.isCache) {
+          this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
+        }
+      });
+      this.queryBookChapterWithCache(this.bookId, curChapterIndex + 1, false).then(res => {
+        if (!res.data.errors && !res.data.data.isCache) {
+          this.bookChapterCaches[res.data.data.bookChapter.index] = res.data.data.bookChapter;
+        }
+      });
+    },
+    async queryBookChapterWithCache(bookId, chapterIndex, read) {
+      if (chapterIndex < 0) {
+        return {
+          data: {
+            errors: [
+              'chapterIndex cannot < 0.'
+            ]
+          }
+        };
+      }
+      if (this.bookChapterCaches[chapterIndex]) {
+        if (read) {
+          apiNotifyReadBookChapter(bookId, chapterIndex);
+        }
+        return {
+          data: {
+            data: {
+              bookChapter: this.bookChapterCaches[chapterIndex],
+              isCache: true
+            }
+          }
+        };
+      } else {
+        return apiQueryBookChapter(bookId, chapterIndex, read);
+      }
     },
     changeFontSize(delta) {
       this.$store.commit({
@@ -174,16 +186,24 @@ export default {
         chapterIndex: this.chapterIndex,
         chapterScrollY: window.scrollY,
       });
+    },
+    clearOutdatedCache(curChapterIndex) {
+      let toDel = [];
+      for (const chapterIndex in this.bookChapterCaches) {
+        if (Math.abs(chapterIndex - curChapterIndex) > 2) {
+          toDel.push(chapterIndex);
+        }
+      }
+      for (const chapterIndex of toDel) {
+        delete this.bookChapterCaches[chapterIndex];
+      } 
     }
-  },
-  title() {
-    return this.bookChapter.name + " - 易读";
   }
 }
 </script>
 
-<style scoped>
-p {
+<style>
+.chapterContent {
   text-indent: 2em;
   /* via https://perishablepress.com/wrapping-content/ */
 	white-space: pre;           /* CSS 2.0 */

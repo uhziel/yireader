@@ -1,5 +1,6 @@
 <template>
   <form class="form-signin">
+    <b-alert variant="danger" :show="showDeployAlert" class="mt-3">你的部署缺少数据库配置，请先按 <b-link href="https://uhziel.github.io/yireader/user/deploy.html">部署</b-link> 进行操作。</b-alert>
     <h1 class="text-center">登录</h1>
     <label for="inputUsername" class="sr-only">用户名</label>
     <input id="inputUsername" type="text" class="form-control" v-model="username" placeholder="用户名" required>
@@ -12,18 +13,25 @@
 </template>
 
 <script>
+  import {apiStatus} from '../api';
   export default {
     data() {
       return {
         username: "",
         password: "",
         error: "",
+        showDeployAlert: false,
       }
     },
     computed: {
       showAlert() {
         return this.error.length > 0;
       },
+    },
+    created() {
+      apiStatus().then(res => {
+        this.showDeployAlert = !res.data.configMongodbUri;
+      }).catch(e => console.error(e));
     },
     methods: {
       handleSubmit() {

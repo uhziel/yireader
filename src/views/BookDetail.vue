@@ -8,7 +8,7 @@
         <dl>
           <dt>{{name}}</dt>
           <dd>
-            <p>作者：{{author}}</p>
+            <p>作者：{{authorName}}</p>
             <p>最新章节：{{bookData.lastChapter}}</p>
               <p>书架：
                 <b-button size="sm" v-if="!inBookShelf" :disabled="disableAddToBookshelf" @click="addToBookshelf()">加入</b-button>
@@ -25,27 +25,25 @@
     <div class="catalog">
       <div class="title">目录</div>
       <p>排序：<b-button size="sm" @click="toggleOrder">{{textButtonToggleOrder}}</b-button></p>
-      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{name:name, author:author, bookId: bookData.id, chapterIndex:chapterWithIndex.chapterIndex}}'>{{chapterWithIndex.chapter.name}}</router-link></p>
+      <p v-for="(chapterWithIndex, index) in bookCatalogWithIndex" :key="index"><router-link :to='{name:"BookChapter", params:{bookId: bookData.id, chapterIndex:chapterWithIndex.chapterIndex}, query: bookInfo}'>{{chapterWithIndex.chapter.name}}</router-link></p>
     </div>
   </div>
 </template>
 
 <script>
-import {book, addBookToBookShelf, reverseOrderBook} from '../api'
+import {apiQueryBook, apiAddBookToBookShelf, apiReverseOrderBook} from '../api'
 
 export default {
   name: "BookDetail",
-  props: ["name", "author"],
+  props: {bookId: String, name: String, authorName: String},
   data() {
     return {
-      bookInfo: [],
+      bookInfo: {},
       bookData: {
         id: '',
         name: '',
         inBookShelf: false,
-        author: {
-          name: '',
-        },
+        authorName: '',
         coverUrl: '',
         lastChapter: '',
         status: '',
@@ -75,7 +73,7 @@ export default {
       return !!(this.bookData.inBookshelf)
     },
     bookFullName() {
-      return this.name + "-" + this.author;
+      return this.name + "-" + this.authorName;
     },
     disableAddToBookshelf() {
       return (this.bookData.name.length === 0);
@@ -92,7 +90,7 @@ export default {
     this.bookInfo = this.$route.query;
     this.fetchBook();
     console.log("name: ", this.name);
-    console.log("author: ", this.author);
+    console.log("authorName: ", this.authorName);
     console.log("bookInfo: ", this.bookInfo)
   },
   watch: {
@@ -103,7 +101,7 @@ export default {
   },
   methods: {
     fetchBook() {
-      book(this.bookInfo).then(res => {
+      apiQueryBook(this.bookInfo).then(res => {
         if (!res.data.errors) {
           this.bookData = res.data.data.book;
           this.bookInfo.bookId = this.bookData.id;
@@ -113,21 +111,16 @@ export default {
       }).catch(e => console.error(e));
     },
     addToBookshelf() {
-      addBookToBookShelf(this.bookData.id).then(res => {
+      apiAddBookToBookShelf(this.bookData.id).then(res => {
         if (!res.data.errors) {
           this.fetchBook();
-          this.$store.commit({
-            type: 'addToBookshelf',
-            bookId: this.bookData.id,
-            bookFullName: this.bookFullName
-          });
         } else {
           //TODO
         }
       }).catch(e => console.error(e));
     },
     toggleOrder() {
-      reverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {
+      apiReverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {
         if (!res.data.errors) {
           this.fetchBook();
         } else {

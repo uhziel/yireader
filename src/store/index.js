@@ -7,22 +7,46 @@ import auth from './modules/auth';
 Vue.use(Vuex)
 
 function upgradeUserData(oldUserData, newUserData) {
-  if (oldUserData.version === 1 && newUserData.version === 2) {
-    for (const bookUserData of oldUserData.bookshelf) {
-      bookUserData.reverseOrder = false;
-    }
+  if (oldUserData.version < 3) {
+    oldUserData.bookshelf = {};
   }
   oldUserData.version = newUserData.version;
+}
+
+const MAX_BOOK_USER_DATA_LENGTH = 20;
+const OUTDATED_INTVERL = 30 * 24 * 60 * 60 * 1000;
+function clearOutdatedUserData(userData) {
+  if (Object.keys(userData.bookshelf).length <= MAX_BOOK_USER_DATA_LENGTH) {
+    return;
+  }
+
+  const now = Date.now();
+  const toDel = [];
+  for (const bookId in userData.bookshelf) {
+    if (Object.hasOwnProperty.call(userData.bookshelf, bookId)) {
+      const bookUserData = userData.bookshelf[bookId];
+      if (!bookUserData.updatedAt) {
+        toDel.push(bookId);
+      }
+      else if (now - bookUserData.updatedAt > OUTDATED_INTVERL) {
+        toDel.push(bookId);
+      }
+    }
+  }
+
+  for (const bookId of toDel) {
+    Vue.delete(userData.bookshelf, bookId);
+  }
 }
 
 const state = () => {
   const initState = {
     userData: { 
-      bookshelf: [], //{bookId: "", bookFullName: "", chapterIndex: -1, chapterScrollY: 0.0}
+      bookshelf: {},
       theme: {
         'font-size': 1.235
       },
-      version: 2
+      version: 3
     }, 
   };
 
@@ -47,66 +71,40 @@ export default new Vuex.Store({
   getters: {
     getBookUserData(state) {
       return function (bookId) {
-        for (const bookUserData of state.userData.bookshelf) {
-          if (bookUserData.bookId === bookId) {
-            return bookUserData;
-          }
-        }
-        return null;
+        return state.userData.bookshelf[bookId];
       };
+    },
+    fontSize(state) {
+      return state.userData.theme['font-size'] + 'em';
     },
   },
   mutations: {
-    addToBookshelf (state, payload) {
-      Vue.set(state.userData.bookshelf, state.userData.bookshelf.length,
-        {bookId: payload.bookId, bookFullName: payload.bookFullName, chapterIndex: -1, chapterScrollY: 0.0});
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-    },
-    removeFromBookshelf (state, indexInBookshelf) {
-      Vue.delete(state.userData.bookshelf, indexInBookshelf);
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-    },
-    moveUpInBookshelf (state, indexInBookshelf) {
-      if (indexInBookshelf <= 0 ) {
-        return;
-      }
-      const tmp = state.userData.bookshelf[indexInBookshelf-1];
-      Vue.set(state.userData.bookshelf, indexInBookshelf-1, state.userData.bookshelf[indexInBookshelf]);
-      Vue.set(state.userData.bookshelf, indexInBookshelf, tmp);
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-    },
-    moveDownInBookshelf (state, indexInBookshelf) {
-      if (indexInBookshelf >= state.userData.bookshelf.length - 1) {
-        return;
-      }
-      const tmp = state.userData.bookshelf[indexInBookshelf+1];
-      Vue.set(state.userData.bookshelf, indexInBookshelf+1, state.userData.bookshelf[indexInBookshelf]);
-      Vue.set(state.userData.bookshelf, indexInBookshelf, tmp);
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-    },
     setReading (state, payload) {
       console.log('setReading bookId:', payload.bookId, 'bookFullName:', payload.bookFullName,
         " index:", payload.chapterIndex,
         " scrollY:", payload.chapterScrollY);
-      for (const bookUserData of state.userData.bookshelf) {
-        if (bookUserData.bookId === payload.bookId) {
-          bookUserData.bookFullName = payload.bookFullName;
-          bookUserData.chapterIndex = payload.chapterIndex;
-          bookUserData.chapterScrollY = payload.chapterScrollY;
-          localStorage.setItem('userData', JSON.stringify(state.userData));
-          break;
-        }
+      const bookUserData = state.userData.bookshelf[payload.bookId];
+      if (!bookUserData) {
+        Vue.set(state.userData.bookshelf, payload.bookId, {
+          updatedAt: Date.now(),
+          bookFullName: payload.bookFullName,
+          chapterIndex: payload.chapterIndex,
+          chapterScrollY: payload.chapterScrollY,
+        });
+      } else {
+        bookUserData.updatedAt = Date.now();
+        bookUserData.bookFullName = payload.bookFullName;
+        bookUserData.chapterIndex = payload.chapterIndex;
+        bookUserData.chapterScrollY = payload.chapterScrollY;
       }
+      clearOutdatedUserData(state.userData);
+      localStorage.setItem('userData', JSON.stringify(state.userData));
     },
     changeFontSize (state, payload) {
       state.userData.theme['font-size'] += payload.delta;
       if (state.userData.theme['font-size'] < 1.035) {
         state.userData.theme['font-size'] = 1.035;
       }
-      localStorage.setItem('userData', JSON.stringify(state.userData));
-    },
-    logout (state) {
-      state.userData.bookshelf = [];
       localStorage.setItem('userData', JSON.stringify(state.userData));
     },
   },
