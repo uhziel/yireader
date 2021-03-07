@@ -26,17 +26,26 @@ Vue.use(VueRouter)
     path: '/booksources',
     name: 'BookSources',
     component: () => import(/* webpackChunkName: "booksource" */ '../views/BookSources.vue'),
+    meta: {
+      requiresAuth: true
+    },
   },
   {
     path: '/search/:searchKey',
     name: 'Search',
     component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue'),
-    props: true
+    meta: {
+      requiresAuth: true
+    },
+    props: true,
   },
   {
     path: '/bookdetail/:bookId',
     name: 'BookDetail',
     component: () => import(/* webpackChunkName: "bookdetail" */ '../views/BookDetail.vue'),
+    meta: {
+      requiresAuth: true
+    },
     props: route => {
       const v = {
         bookId: route.params.bookId,
@@ -50,6 +59,9 @@ Vue.use(VueRouter)
     path: '/bookchapter/:bookId/:chapterIndex',
     name: 'BookChapter',
     component: () => import(/* webpackChunkName: "bookchapter" */ '../views/BookChapter.vue'),
+    meta: {
+      requiresAuth: true
+    },
     props: route => {
       const v = {
         bookId: route.params.bookId,

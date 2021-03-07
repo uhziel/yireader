@@ -210,8 +210,8 @@ function graphql(query, variables) {
     });
 }
 
-export function apiVersion() {
-    return axios.get(`${origin}/version`);
+export function apiStatus() {
+    return axios.get(`${origin}/status`);
 }
 
 export function apiQueryBookChapter(bookId, bookChapterIndex, read) {
