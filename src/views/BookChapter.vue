@@ -58,7 +58,7 @@ export default {
     },
     contentStyle() {
       return {
-        'font-size': this.$store.state.userData.theme['font-size'] + 'em',
+        'font-size': this.$store.getters.fontSize,
       };
     },
   },
