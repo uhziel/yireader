@@ -11,7 +11,7 @@ export function setAuthorizationHeader(value) {
     }
 }
 
-export function search(key) {
+export function apiSearch(key) {
     const query = `
         query Search($name: String!) {
             search(name: $name) {
@@ -84,7 +84,7 @@ export function apiMoveDownBook(bookId) {
     return graphql(query, variables);
 }
 
-export function book(bookInfo) {
+export function apiQueryBook(bookInfo) {
     const query = `
         query Book($info: BookInfo!) {
             book(info: $info) {
@@ -111,7 +111,7 @@ export function book(bookInfo) {
     return graphql(query, variables);
 }
 
-export function reverseOrderBook(bookId, reverse) {
+export function apiReverseOrderBook(bookId, reverse) {
     const query = `
         mutation ReverseOrderBook($id: ID!, $reverse: Boolean!) {
             reverseOrderBook(id: $id, reverse: $reverse)
@@ -123,7 +123,7 @@ export function reverseOrderBook(bookId, reverse) {
     return graphql(query, variables);
 }
 
-export function addBookToBookShelf(bookId) {
+export function apiAddBookToBookShelf(bookId) {
     const query = `
         mutation AddBookToBookShelf($id: ID!) {
             addBookToBookShelf(id: $id)
@@ -187,27 +187,15 @@ export function apiEnableBookSource(payload) {
     return graphql(query, payload);
 }
 
-export function detail(bookInfo) {
-    return axios.post(`${origin}/detail`, bookInfo);
-}
-
-export function catalog(bookDetail) {
-    return axios.post(`${origin}/catalog`, bookDetail);
-}
-
-export function chapter(chapterInfo) {
-    return axios.post(`${origin}/chapter`, chapterInfo);
-}
-
-export function login(user) {
+export function apiLogin(user) {
     return axios.post(`${origin}/users/login`, user);
 }
 
-export function register(user) {
+export function apiRegister(user) {
     return axios.post(`${origin}/users/register`, user);
 }
 
-export function changePassword(user) {
+export function apiChangePassword(user) {
     return axios.post(`${origin}/users/changepassword`, user);
 }
 
@@ -222,11 +210,11 @@ function graphql(query, variables) {
     });
 }
 
-export function version() {
+export function apiVersion() {
     return axios.get(`${origin}/version`);
 }
 
-export function queryBookChapter(bookId, bookChapterIndex, read) {
+export function apiQueryBookChapter(bookId, bookChapterIndex, read) {
     const query = `
     query BookChapter($info: BookChapterInfo!) {
       bookChapter(info: $info) {
@@ -253,7 +241,7 @@ export function queryBookChapter(bookId, bookChapterIndex, read) {
   return graphql(query, variables);
 }
 
-export function notifyReadBookChapter(bookId, bookChapterIndex) {
+export function apiNotifyReadBookChapter(bookId, bookChapterIndex) {
     const query = `
     query BookChapter($info: BookChapterInfo!) {
       bookChapter(info: $info) {
@@ -269,15 +257,3 @@ export function notifyReadBookChapter(bookId, bookChapterIndex) {
   };
   return graphql(query, variables);
 }
-
-export default {
-    search,
-    book,
-    detail,
-    catalog,
-    chapter,
-    login,
-    register,
-    changePassword,
-    graphql,
-};

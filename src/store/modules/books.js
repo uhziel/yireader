@@ -1,4 +1,4 @@
-import {apiQueryBooks, apiDeleteBook, apiMoveUpBook, apiMoveDownBook} from "../../api.js"
+import {apiQueryBooks, apiDeleteBook, apiMoveUpBook, apiMoveDownBook} from "../../api"
 
 const state = () => ({
   all: [],

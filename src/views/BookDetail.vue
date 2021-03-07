@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import {book, addBookToBookShelf, reverseOrderBook} from '../api'
+import {apiQueryBook, apiAddBookToBookShelf, apiReverseOrderBook} from '../api'
 
 export default {
   name: "BookDetail",
@@ -101,7 +101,7 @@ export default {
   },
   methods: {
     fetchBook() {
-      book(this.bookInfo).then(res => {
+      apiQueryBook(this.bookInfo).then(res => {
         if (!res.data.errors) {
           this.bookData = res.data.data.book;
           this.bookInfo.bookId = this.bookData.id;
@@ -111,7 +111,7 @@ export default {
       }).catch(e => console.error(e));
     },
     addToBookshelf() {
-      addBookToBookShelf(this.bookData.id).then(res => {
+      apiAddBookToBookShelf(this.bookData.id).then(res => {
         if (!res.data.errors) {
           this.fetchBook();
           this.$store.commit({
@@ -125,7 +125,7 @@ export default {
       }).catch(e => console.error(e));
     },
     toggleOrder() {
-      reverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {
+      apiReverseOrderBook(this.bookInfo.bookId, !this.bookData.reverseOrder).then(res => {
         if (!res.data.errors) {
           this.fetchBook();
         } else {

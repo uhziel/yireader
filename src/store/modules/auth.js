@@ -1,5 +1,5 @@
-import {login as loginAPI, register as registerAPI,
-  changePassword as changePasswordAPI, setAuthorizationHeader} from "../../api.js"
+import {apiLogin, apiRegister,
+  apiChangePassword, setAuthorizationHeader} from "../../api"
 
 const state = () => {
   const initState = {
@@ -64,7 +64,7 @@ const actions = {
   async login({commit}, user) {
     commit('authRequest');
     try {
-      let result = (await loginAPI(user)).data;
+      let result = (await apiLogin(user)).data;
       if (result.ret === 0) {
         commit('authSuccess', {
           username: result.username,
@@ -82,7 +82,7 @@ const actions = {
   async register({commit}, user) {
     commit('authRequest');
     try {
-      let result = (await registerAPI(user)).data;
+      let result = (await apiRegister(user)).data;
       if (result.ret === 0) {
         commit('authSuccess', {
           username: result.username,
@@ -98,7 +98,7 @@ const actions = {
     }
   },
   async changePassword(_, user) {
-    return (await changePasswordAPI(user)).data;
+    return (await apiChangePassword(user)).data;
   },
 };
 

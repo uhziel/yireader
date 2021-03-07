@@ -8,7 +8,7 @@
 
 <script>
 import {version} from '../version';
-import {version as versionApi} from '../api';
+import {apiVersion} from '../api';
 
 export default {
   name: 'About',
@@ -19,7 +19,7 @@ export default {
     };
   },
   created() {
-    versionApi().then(res => {
+    apiVersion().then(res => {
       this.apiVersion = res.data.version;
     }).catch(e => console.error(e));
   },

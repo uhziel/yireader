@@ -1,5 +1,5 @@
 import {apiQueryBookSources, apiCreateBookSource, apiDeleteBookSource, apiMoveUpBookSource,
-  apiMoveDownBookSource, apiEnableBookSource} from "../../api.js"
+  apiMoveDownBookSource, apiEnableBookSource} from "../../api"
 
 const state = () => ({
   all: [],

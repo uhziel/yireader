@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {queryBookChapter, notifyReadBookChapter} from "../api.js";
+import {apiQueryBookChapter, apiNotifyReadBookChapter} from "../api";
 import ChapterNav from '@/components/ChapterNav.vue'
 
 export default {
@@ -154,7 +154,7 @@ export default {
       }
       if (this.bookChapterCaches[chapterIndex]) {
         if (read) {
-          notifyReadBookChapter(bookId, chapterIndex);
+          apiNotifyReadBookChapter(bookId, chapterIndex);
         }
         return {
           data: {
@@ -165,7 +165,7 @@ export default {
           }
         };
       } else {
-        return queryBookChapter(bookId, chapterIndex, read);
+        return apiQueryBookChapter(bookId, chapterIndex, read);
       }
     },
     changeFontSize(delta) {
