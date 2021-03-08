@@ -2,6 +2,7 @@ import {apiQueryBooks, apiDeleteBook, apiMoveUpBook, apiMoveDownBook} from "../.
 
 const state = () => ({
   all: [],
+  loading: true,
   error: "",
 });
 
@@ -11,6 +12,7 @@ const getters = {
 const mutations = {
   setSimpleBookInfos(state, simpleBookInfos) {
     state.all = simpleBookInfos;
+    state.loading = false;
   },
   setError(state, error) {
     state.error = error;
