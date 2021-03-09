@@ -28,6 +28,7 @@ const actions = {
     apiCreateBookSource(payload).then(res => {
       if (!res.data.errors) {
         dispatch('fetchBookSources');
+        commit('setError', '');
       } else {
         commit('setError', res.data.errors[0].message);
       }
