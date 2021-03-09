@@ -1,15 +1,15 @@
 <template>
   <div class="bookSource">
-    <dl>
-      <dt>{{content.name}}</dt>
-      <dd><a :href="fullUrl" target="_blank">{{content.url}}</a></dd>
+      <div class="d-flex">
+        <div>{{content.name}}</div>
+        <b-form-checkbox class="ml-auto" :checked="content.enableSearch" @input="enableBooksource" size="lg" switch />
+      </div>
+      <p><a :href="fullUrl" target="_blank">{{content.url}}</a></p>
       <b-button-group class="operate my-3" size="sm">
         <b-button class="mx-1" variant="danger" @click="deleteBooksource">删除</b-button>
         <b-button class="mx-1" @click="moveUpBooksource">上移</b-button>
         <b-button class="mx-1" @click="moveDownBooksource">下移</b-button>
-        <b-button class="mx-1" @click="enableBooksource" >{{buttonTextEnable}}</b-button>
       </b-button-group>
-    </dl>
   </div>
 </template>
 
