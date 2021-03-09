@@ -1,5 +1,5 @@
 <template>
-  <b-container class="bookSources">
+  <div class="bookSources">
     <b-row>
       <b-col>
         <b-form-input type="text" v-model="newBooksourceUrl" size="sm" class="mr-sm-2"></b-form-input>
@@ -12,7 +12,7 @@
         <BookSourceInfo :content="booksource" :index="index" />
       </b-col>
     </b-row>
-  </b-container>
+  </div>
 </template>
 
 <script>

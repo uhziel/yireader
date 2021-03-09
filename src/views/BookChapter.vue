@@ -1,5 +1,5 @@
 <template>
-  <b-container tag="article" class="BookChapter">
+  <article class="mb-5">
     <p v-if="loading">正在加载中</p>
     <div v-else>
       <h1 class="text-center">{{bookChapter.name}}</h1>
@@ -11,7 +11,7 @@
       <b-button pill class="decFontSize" @click.prevent="changeFontSize(-0.1)">减小</b-button>
     </div>
 
-  </b-container>
+  </article>
 </template>
 
 <script>

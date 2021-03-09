@@ -1,13 +1,13 @@
 <template>
   <div class="home">
     <p v-if="!loading && bookInfos.length === 0">请先添加"书源"再通过搜索框添加"书籍"。详细见 <a href="https://uhziel.github.io/yireader/user/#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B" target="_blank">快速开始</a>。</p>
-    <b-container v-else>
+    <div v-else>
       <b-row cols="1">
         <b-col v-for="(bookInfo, index) in bookInfos" :key="index">
           <BookInfo :index="index" :info="bookInfo" :inBookshelf="true" />
         </b-col>
       </b-row>  
-    </b-container>
+    </div>
   </div>
 </template>
 
