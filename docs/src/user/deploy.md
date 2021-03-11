@@ -29,7 +29,7 @@
 ### 部署预发布版
 
 ::: danger 警告
-预发布版不稳定，请不要用于生产用途，仅用于测试最新功能。
+预发布版仅用于测试最新功能，请不要用于生产用途。
 :::
 
 下载预发布版的 [docker-compose.prerelease.yml](https://github.com/uhziel/yireader/blob/main/docker-compose.prerelease.yml) 并改名为 docker-compose.xml。

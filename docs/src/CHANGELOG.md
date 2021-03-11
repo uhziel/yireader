@@ -4,11 +4,13 @@ sidebar: auto
 
 # 更新日志
 
-版本号命名规则遵循 [语义化版本 2.0.0](https://semver.org/lang/zh-CN/)
+遵循 [语义化版本 2.0.0](https://semver.org/lang/zh-CN/) [如何维护更新日志 1.0.0](https://keepachangelog.com/zh-CN/1.0.0/)
 
-日志格式遵循 [如何维护更新日志 1.0.0](https://keepachangelog.com/zh-CN/1.0.0/)
-
-## [0.3.0]
+## 0.3.0
+(2021-3-11)
+::: tip 提醒
+从此版本开始，依赖数据库 mongodb
+:::
 ### 新增
 - 允许用户添加自定义的书源、管理书源
 - 添加账号系统，方便用户跨设备间同步数据

@@ -12,7 +12,7 @@
 ## 快速开始
 
 1. 添加书源
-   1. 在 Github 上搜索别人编写的厚墨书源 [name url search version extension:.json path:/sources](https://github.com/search?q=name+url+search+version+extension%3A.json+path%3A%2Fsources&type=Code)
+   1. 在 Github 上搜索他人编写的 [厚墨书源](https://github.com/search?q=name+url+search+version+extension%3A.json+path%3A%2Fsources&type=Code)
    2. 点开自己需要的书源，点击'Raw'按钮后，拷贝浏览器url获得书源的完整地址
    3. 切换到“书源”页签，添加该书源
 2. 添加书
