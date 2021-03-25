@@ -7,7 +7,7 @@ sidebar: auto
 遵循 [语义化版本 2.0.0](https://semver.org/lang/zh-CN/) [如何维护更新日志 1.0.0](https://keepachangelog.com/zh-CN/1.0.0/)
 
 ## 0.3.1
-
+(2021-3-24)
 ### 变更
 提高易读网页重新加载时的速度
 ### 修正
